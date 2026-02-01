@@ -1,0 +1,98 @@
+services:
+  app:
+    container_name: recru_app
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    tty: true
+    extra_hosts:
+      # xdebug
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/var/www/backend/
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+    depends_on:
+      - db
+    networks:
+      default:
+        ipv4_address: 172.75.0.2
+
+  db:
+    build:
+      context: docker/db
+    container_name: recru_db
+    restart: unless-stopped
+    ports:
+      - "${DB_EXTERNAL_PORT}:${DB_PORT}"
+    environment:
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_DB: postgres
+    volumes:
+      - dbData:/var/lib/postgresql/data
+    networks:
+      default:
+        ipv4_address: 172.75.0.3
+
+  nginx:
+    container_name: recru_nginx
+    image: nginx:1.29.4
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/backend/
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      default:
+        ipv4_address: 172.75.0.4
+
+  buggregator:
+    container_name: recru_buggregator
+    image: butschster/buggregator:1.13.5
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "1025:1025"
+      - "9912:9912"
+      - "9913:9913"
+    networks:
+      default:
+        ipv4_address: 172.75.0.5
+
+  redis:
+    image: redis:8.4.0
+    container_name: recru_redis
+    restart: unless-stopped
+    volumes:
+      - redisData:/data
+    networks:
+      default:
+        ipv4_address: 172.75.0.6
+
+  redis-commander:
+    container_name: recru_redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local_0:redis:6379:0,local_1:redis:6379:1,local_2:redis:6379:2
+    ports:
+      - "8081:8081"
+    networks:
+      default:
+        ipv4_address: 172.75.0.7
+
+networks:
+  default:
+    name: recru_network
+    external: true
+    driver: bridge
+
+volumes:
+  dbData:
+  redisData:
