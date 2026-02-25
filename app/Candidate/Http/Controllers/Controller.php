@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Base\Http\Controllers\Controller as BaseController;
+use App\Candidate\Http\Requests\StoreRequest as StoreCandidateRequest;
 use App\Candidate\Http\Resources\Resource as CandidateResource;
 use App\Candidate\Models\Candidate as CandidateModel;
-use App\Common\Http\Controllers\Controller as BaseController;
-use App\Candidate\Http\Requests\StoreRequest as StoreCandidateRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 final class Controller extends BaseController
 {

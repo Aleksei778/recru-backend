@@ -25,14 +25,14 @@ final class Resource extends JsonResource
             'source' => $this->source,
             'status' => $this->status,
             'experience_years' => $this->experience_years,
-            'education_level' => $this->education_level?->value, // enum
+            'grade' => $this->grade,
+            'education_level' => $this->education_level?->value,
             'added_by_id' => $this->added_by_id,
-            'match_score' => $this->match_score,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'interview' => $this->whenLoaded('interview'), // relation
-            'added_by' => $this->whenLoaded('addedBy'), // relation
-            'tenant' => $this->whenLoaded('tenant'), // relation
+            'interviews' => $this->whenLoaded('interviews'),
+            'added_by' => $this->whenLoaded('addedBy'),
+            'tenant' => $this->whenLoaded('tenant'),
         ];
     }
 }

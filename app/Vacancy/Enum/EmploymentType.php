@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Job\Enum;
+namespace App\Vacancy\Enum;
 
 enum EmploymentType: string
 {
@@ -14,10 +14,10 @@ enum EmploymentType: string
     public static function values(): array
     {
         return [
-            self::FULL_TIME,
-            self::PART_TIME,
-            self::CONTRACT,
-            self::INTERNSHIP,
+            self::FULL_TIME->value,
+            self::PART_TIME->value,
+            self::CONTRACT->value,
+            self::INTERNSHIP->value,
         ];
     }
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Requests;
 
-use App\Candidate\Enum\Source;
+use App\Candidate\Enum\{EducationLevel, Source};
 use Illuminate\Foundation\Http\FormRequest;
-use App\Candidate\Enum\SeniorityLevel;
 
 final class StoreRequest extends FormRequest
 {
@@ -24,8 +23,7 @@ final class StoreRequest extends FormRequest
             'github_url' => 'nullable|url',
             'source' => 'required|in:' . implode(',', Source::values()),
             'experience_years' => 'required|integer|min:0|max:15',
-            'education_level' => 'required|in:' . implode(',', SeniorityLevel::values()),
-            'added_by_id' => 'required|exists:users,id',
+            'education_level' => 'required|in:' . implode(',', EducationLevel::values()),
         ];
     }
 }

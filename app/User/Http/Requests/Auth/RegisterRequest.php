@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tenant\Http\Requests\Auth;
+namespace App\Common\Http\Requests\Auth;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Contracts\Validation\Validator;
 use Psr\Log\LoggerInterface;
 
 final class RegisterRequest extends FormRequest
@@ -23,7 +23,12 @@ final class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'domain' => [
+            'company' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'subdomain' => [
                 'required',
                 'string',
                 'max:63',
@@ -44,7 +49,7 @@ final class RegisterRequest extends FormRequest
                     ->letters()
                     ->numbers()
                     ->symbols()
-            ]
+            ],
         ];
     }
 

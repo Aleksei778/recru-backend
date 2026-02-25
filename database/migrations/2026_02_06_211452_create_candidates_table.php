@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Job\Enum\SeniorityLevel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Candidate\Enum\SeniorityLevel;
 use App\Candidate\Enum\Source;
 use App\Candidate\Enum\Status;
 
@@ -22,7 +22,9 @@ return new class extends Migration
             $table->string('tenant_id');
             $table->foreign('tenant_id')
                 ->references('id')
-                ->on('tenants');
+                ->on('tenants')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
             $table->foreignId('added_by_id')
                 ->nullable()

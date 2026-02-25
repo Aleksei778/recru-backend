@@ -16,12 +16,12 @@ enum EducationLevel: string
     public static function values(): array
     {
         return [
-            self::SECONDARY,
-            self::INCOMPLETE_HIGHER,
-            self::BACHELOR,
-            self::MASTER,
-            self::SPECIALIST,
-            self::DOCTOR,
+            self::SECONDARY->value,
+            self::INCOMPLETE_HIGHER->value,
+            self::BACHELOR->value,
+            self::MASTER->value,
+            self::SPECIALIST->value,
+            self::DOCTOR->value,
         ];
     }
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Requests;
 
+use App\Candidate\Enum\{EducationLevel, Status};
 use Illuminate\Foundation\Http\FormRequest;
-use App\Candidate\Enum\Status;
-use App\Candidate\Enum\EducationLevel;
 
 final class UpdateRequest extends FormRequest
 {

@@ -24,5 +24,15 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN groupadd -g 1000 www && \
-    useradd -u 1000 -ms /bin/bash -g www www && \
-    chown -R www:www /var/www
+    useradd -u 1000 -ms /bin/bash -g www www
+
+RUN mkdir -p /run/php && \
+    chown -R www:www /run/php
+
+RUN chown -R www:www /var/www
+
+USER www
+
+EXPOSE 9000
+
+CMD ["php-fpm"]

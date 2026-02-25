@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Common\Providers;
+namespace App\Tenant\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;

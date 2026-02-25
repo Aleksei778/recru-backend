@@ -11,17 +11,15 @@ enum Source: string
     case SOCIAL = 'social';
     case EMAIL = 'email';
     case BULK_IMPORT = 'bulk_import';
-    case GOOGLE_EXTENSION = 'google_extension';
 
     public static function values(): array
     {
         return [
-            self::HH,
-            self::HABR,
-            self::SOCIAL,
-            self::EMAIL,
-            self::BULK_IMPORT,
-            self::GOOGLE_EXTENSION,
+            self::HH->value,
+            self::HABR->value,
+            self::SOCIAL->value,
+            self::EMAIL->value,
+            self::BULK_IMPORT->value,
         ];
     }
 }

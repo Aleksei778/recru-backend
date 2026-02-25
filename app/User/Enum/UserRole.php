@@ -6,6 +6,14 @@ namespace App\User\Enum;
 
 enum UserRole: string
 {
-    case ADMIN = 'admin';
-    case RECRUITER = 'recruiter';
+    case Admin = 'admin';
+    case Recruiter = 'recruiter';
+
+    public static function values(): array
+    {
+        return [
+            self::Admin->value,
+            self::Recruiter->value,
+        ];
+    }
 }

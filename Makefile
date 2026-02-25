@@ -17,7 +17,7 @@ docker-up:
 	@env UID=${UID} $(COMPOSE) up -d --remove-orphans
 
 docker-down:
-	@env UID=${UID} $(COMPOSE) down
+	@env UID=${UID} $(COMPOSE) down db -v
 
 docker-restart: docker-down docker-up
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Common\Providers;
+namespace App\Base\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;

@@ -14,10 +14,10 @@ enum Status: string
     public static function values(): array
     {
         return [
-            'new' => self::NEW,
-            'screened' => self::SCREENED,
-            'approved' => self::APPROVED,
-            'rejected' => self::REJECTED,
+            self::NEW->value,
+            self::SCREENED->value,
+            self::APPROVED->value,
+            self::REJECTED->value,
         ];
     }
 }

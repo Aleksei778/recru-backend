@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Job\Enum;
+namespace App\Vacancy\Enum;
 
 enum WorkMode: string
 {
@@ -13,9 +13,9 @@ enum WorkMode: string
     public static function values(): array
     {
         return [
-            self::OFFICE,
-            self::REMOTE,
-            self::HYBRID,
+            self::OFFICE->value,
+            self::REMOTE->value,
+            self::HYBRID->value,
         ];
     }
 }

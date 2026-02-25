@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Job\Enum;
+namespace App\Vacancy\Enum;
 
 enum Status: string
 {
@@ -13,9 +13,9 @@ enum Status: string
     public static function values(): array
     {
         return [
-            self::DRAFT,
-            self::PUBLISHED,
-            self::CLOSED,
+            self::DRAFT->value,
+            self::PUBLISHED->value,
+            self::CLOSED->value,
         ];
     }
 }
