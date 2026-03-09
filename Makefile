@@ -2,7 +2,7 @@ include .env
 
 SHELL = /bin/sh
 UID := $(shell id -u)
-COMPOSE = docker compose -f docker-compose.local.yaml
+COMPOSE = docker compose -p recru_backend -f docker-compose.local.yaml
 
 .PHONY: docker-up docker-down docker-restart docker-stop docker-clean \
         php-bash db-bash db-console redis-bash redis-cli \
@@ -62,7 +62,7 @@ composer-remove:
 
 laravel-setup:
 	@env UID=${UID} $(COMPOSE) exec app php artisan key:generate
-	@env UID=${UID} docker compose -p template restart app
+	@env UID=${UID} $(COMPOSE) restart app
 
 project-installation: docker-up composer-install laravel-setup db-migrate
 	@echo "Laravel project was successfully installed."

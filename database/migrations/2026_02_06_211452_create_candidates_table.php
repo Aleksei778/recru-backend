@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Job\Enum\SeniorityLevel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Candidate\Enum\Source;
-use App\Candidate\Enum\Status;
+use App\Candidate\Enum\{Source, Status, EducationLevel};
 
 return new class extends Migration
 {
@@ -16,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('candidates', function (Blueprint $table) {
+        Schema::create('candidates', static function (Blueprint $table) {
             $table->id();
 
             $table->string('tenant_id');
@@ -39,7 +37,7 @@ return new class extends Migration
             $table->string('resume_url');
             $table->string('linkedin_url')->nullable();
             $table->string('github_url')->nullable();
-            $table->enum('education_level', SeniorityLevel::values());
+            $table->enum('education_level', EducationLevel::values());
             $table->enum('source', Source::values());
             $table->enum('status', Status::values())->default(Status::NEW);
             $table->integer('experience_years');

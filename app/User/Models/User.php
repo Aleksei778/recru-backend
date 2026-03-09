@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\User\Models;
 
 use App\Tenant\Models\Tenant;
-use App\User\Enum\UserRole;
+use App\User\Enum\Enum\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
