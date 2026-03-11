@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Candidate\Models;
 
+use App\Interview\Models\Interview;
+use App\Skill\Traits\HasSkills;
 use App\Candidate\Enum\{EducationLevel, Grade, Source, Status};
 use App\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 
 final class Candidate extends Model
 {
+    use HasSkills;
+
     protected $table = 'candidates';
 
     protected $fillable = [

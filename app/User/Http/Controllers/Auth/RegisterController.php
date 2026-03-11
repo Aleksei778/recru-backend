@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\User\Http\Controllers\Auth;
 
 use App\Base\Http\Controllers\Controller;
-use App\Common\Http\Requests\Auth\RegisterRequest;
+use App\User\Http\Requests\Auth\RegisterRequest;
 use App\Tenant\Models\Tenant;
-use App\User\Enum\Enum\UserRole;
+use App\User\Enum\UserRole;
 use App\User\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +45,7 @@ final class RegisterController extends Controller
                 'tenant_id' => $tenant->id,
                 'email' => $email,
                 'password' => Hash::make($password),
-                'role' => UserRole::Admin,
+                'role' => UserRole::ADMIN,
             ]);
 
             $token = $user->createToken('recru-hr-token')->plainTextToken;

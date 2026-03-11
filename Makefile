@@ -14,7 +14,7 @@ COMPOSE = docker compose -p recru_backend -f docker-compose.local.yaml
 
 # === DOCKER OPERATIONS ===
 docker-up:
-	@env UID=${UID} $(COMPOSE) up -d --remove-orphans
+	@env UID=${UID} $(COMPOSE) up -d --build db --remove-orphans
 
 docker-down:
 	@env UID=${UID} $(COMPOSE) down db -v

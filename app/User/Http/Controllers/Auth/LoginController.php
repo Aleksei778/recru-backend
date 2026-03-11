@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\User\Http\Controllers\Auth;
 
 use App\Base\Http\Controllers\Controller;
-use App\Common\Http\Requests\Auth\LoginRequest;
+use App\User\Http\Requests\Auth\LoginRequest;
 use App\User\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,10 +47,15 @@ final class LoginController extends Controller
         ]);
     }
 
-    public function me(Request $request): JsonResponse
+    public function getMe(Request $request): JsonResponse
     {
         return new JsonResponse([
             'user' => $request->user(),
         ]);
+    }
+
+    public function updateMe(): JsonResponse
+    {
+
     }
 }

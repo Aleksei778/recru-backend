@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Common\Http\Requests\Auth;
+namespace App\User\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;

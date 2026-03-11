@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'gigachat' => [
+        'auth_url' => env('GIGACHAT_AUTH_URL', 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth'),
+        'base_url' => env('GIGACHAT_BASE_URL', 'https://gigachat.devices.sberbank.ru/api/v1'),
+        'client_id' => env('GIGACHAT_CLIENT_ID', ''),
+        'secret' => env('GIGACHAT_SECRET', ''),
+    ],
 ];
