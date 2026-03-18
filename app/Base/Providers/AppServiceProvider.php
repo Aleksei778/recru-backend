@@ -6,6 +6,7 @@ namespace App\Base\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Smalot\PdfParser\Parser as PdfParser;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Model::unguard();
+
+        $this->app->bind(PdfParser::class, fn() => new PdfParser());
     }
 
     /**

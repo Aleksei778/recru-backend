@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-final class LoginController extends Controller
+final readonly class LoginController extends Controller
 {
     public function login(LoginRequest $request): JsonResponse
     {
@@ -54,8 +54,8 @@ final class LoginController extends Controller
         ]);
     }
 
-    public function updateMe(): JsonResponse
-    {
-
-    }
+//    public function updateMe(): JsonResponse
+//    {
+//
+//    }
 }
