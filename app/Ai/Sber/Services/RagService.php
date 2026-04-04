@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Ai\Services;
+namespace App\Ai\Sber\Services;
 
 use App\Vacancy\Models\Vacancy;
 

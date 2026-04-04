@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Ai\Services;
+namespace App\Ai\Sber\Services;
 
-use App\Ai\Exceptions\{AuthException, ChatException, EmbeddingsException};
+use App\Ai\Sber\Exceptions\{AuthException};
+use App\Ai\Sber\Exceptions\ChatException;
+use App\Ai\Sber\Exceptions\EmbeddingsException;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Illuminate\Http\Client\Factory as HttpClient;
 use Illuminate\Support\Str;

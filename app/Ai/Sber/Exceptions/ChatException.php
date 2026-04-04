@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Ai\Exceptions;
+namespace App\Ai\Sber\Exceptions;
 
 class ChatException extends \Exception
 {

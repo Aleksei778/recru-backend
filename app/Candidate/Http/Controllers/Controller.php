@@ -11,7 +11,7 @@ use App\Candidate\Models\Candidate as CandidateModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-final class Controller extends BaseController
+final readonly class Controller extends BaseController
 {
     public function index(): ResourceCollection
     {

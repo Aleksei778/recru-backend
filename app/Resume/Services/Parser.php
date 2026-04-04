@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Resume\Services;
 
-use App\Ai\Exceptions\ChatException;
-use App\Ai\Services\GigaChatService;
+use App\Ai\Sber\Exceptions\ChatException;
+use App\Ai\Sber\Services\GigaChatService;
 use App\Base\Enum\Locale;
 use App\Resume\Dto\ParsedResumeDto;
 
