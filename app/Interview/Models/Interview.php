@@ -10,7 +10,7 @@ use App\Vacancy\Models\Vacancy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Interview extends Model
+final class Interview extends Model
 {
     protected $fillable = [
         'candidate_id',

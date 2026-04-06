@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Interview\Models;
+namespace App\VoiceLog\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

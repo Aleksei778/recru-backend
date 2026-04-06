@@ -10,6 +10,8 @@ use App\Resume\Http\Requests\{StringRequest, FileRequest};
 use Illuminate\Http\JsonResponse;
 use App\Resume\Services\Extract\{PdfExtractor, TxtExtractor};
 use App\Resume\Services\Parser;
+use App\Resume\Services\ResumeManager;
+use Illuminate\Support\Facades\Auth;
 
 final readonly class ParseResumeController extends Controller
 {
@@ -17,19 +19,26 @@ final readonly class ParseResumeController extends Controller
         private Parser       $parser,
         private PdfExtractor $pdfExtractor,
         private TxtExtractor $textExtractor,
+        private ResumeManager $resumeManager,
     ) {
     }
 
     public function parseFile(FileRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $file = $request->file('resume');
 
-        $file = $validated->file('resume');
+        if ($file->getClientMimeType() === 'application/pdf') {
+            $result = $this->resumeManager->handlePdfUpload(
+                $file,
+                Auth::user()?->tenant_id,
+                Auth::id()
+            );
 
-        $text = match ($file->getClientMimeType()) {
-            'application/pdf' => $this->pdfExtractor->extract($file),
-            default => $this->textExtractor->extract($file),
-        };
+            return new JsonResponse($result);
+        }
+
+        $text = $this->textExtractor->extract($file);
 
         return $this->respond($text, $validated['locale']);
     }
