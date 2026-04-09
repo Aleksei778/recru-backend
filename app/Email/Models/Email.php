@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace App\Email\Models;
 
-use App\Candidate\Models\Candidate;
+use App\Base\Enum\Locale;
 use App\User\Models\User;
-use App\Vacancy\Models\Vacancy;
+use App\Interview\Models\Interview;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Email extends Model
+final class Email extends Model
 {
     protected $table = 'emails';
 
     protected $fillable = [
         'user_id',
-        'candidate_id',
-        'vacancy_id',
-        'title',
-        'body',
+        'interview_id',
+        'locale',
+    ];
+
+    protected $casts = [
+        'locale' => Locale::class,
     ];
 
     public function user(): BelongsTo
@@ -27,13 +29,8 @@ class Email extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function candidate(): BelongsTo
+    public function interview(): BelongsTo
     {
-        return $this->belongsTo(Candidate::class);
-    }
-
-    public function vacancy(): BelongsTo
-    {
-        return $this->belongsTo(Vacancy::class);
+        return $this->belongsTo(Interview::class);
     }
 }

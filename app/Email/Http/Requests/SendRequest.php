@@ -11,8 +11,8 @@ final class SendRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'candidate_id' => 'required|integer|exists:candidates,id',
-            'vacancy_id' => 'required|integer|exists:vacancies,id',
+            'interview_id' => 'required|integer|exists:interviews,id',
+            'locale' => 'required|string|in:ru,en',
         ];
     }
 }

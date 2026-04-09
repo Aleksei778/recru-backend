@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Interview\Controllers;
+namespace App\Interview\Http\Controllers;
 
 use App\Interview\Models\Interview;
 use App\Interview\Models\Question;
