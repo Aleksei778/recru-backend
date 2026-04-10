@@ -36,4 +36,14 @@ final class Interview extends Model
     {
         return $this->belongsTo(Vacancy::class);
     }
+
+    public function isPending(): bool
+    {
+        return $this->status === Status::PENDING;
+    }
+
+    public function markAsInProgress(): void
+    {
+        $this->update(['status' => Status::IN_PROGRESS]);
+    }
 }

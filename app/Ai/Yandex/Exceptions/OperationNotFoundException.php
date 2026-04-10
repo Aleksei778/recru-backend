@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace App\Ai\Yandex\Exceptions;
 
-final class FailedIamTokenRefreshException extends \Exception
+final class OperationNotFoundException extends \Exception
 {
 }

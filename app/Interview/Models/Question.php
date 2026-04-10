@@ -6,8 +6,7 @@ namespace App\Interview\Models;
 
 use App\VoiceLog\Models\VoiceLog;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasOne, MorphOne};
 
 final class Question extends Model
 {
@@ -25,5 +24,10 @@ final class Question extends Model
     public function voiceLog(): MorphOne
     {
         return $this->morphOne(VoiceLog::class, 'voiceable');
+    }
+
+    public function answer(): HasOne
+    {
+        return $this->hasOne(Answer::class);
     }
 }

@@ -10,6 +10,6 @@ final readonly class InterviewRepository
 {
     public function find(int $id): ?Interview
     {
-        return Interview::query()->find($id);
+        return Interview::find($id);
     }
 }

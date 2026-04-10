@@ -5,7 +5,7 @@ declare (strict_types=1);
 namespace App\Ai\Yandex\Services\Speechkit;
 
 use App\Ai\Yandex\Services\ObjectStorageService;
-use App\Ai\Yandex\Services\OperationService;
+use App\Ai\Yandex\Services\Operation\ManageService as OperationService;
 use Psr\Log\LoggerInterface;
 use Illuminate\Http\Client\Factory as HttpClient;
 

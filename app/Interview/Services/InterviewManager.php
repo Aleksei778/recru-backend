@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 final readonly class InterviewManager
 {
     public function __construct(
-        private InterviewService $interviewService,
+        private QuestionsService $questionsService,
         private InterviewVoiceService $voiceService,
         private LoggerInterface $logger,
     ) {
@@ -26,12 +26,12 @@ final readonly class InterviewManager
      */
     public function startInterview(Interview $interview): void
     {
-        if ($interview->status !== Status::PENDING) {
+        if (!$interview->isPending()) {
             return;
         }
 
-        $this->interviewService->generateQuestions($interview);
-        $interview->update(['status' => Status::IN_PROGRESS]);
+        $this->questionsService->generate($interview);
+        $interview->markAsInProgress();
     }
 
     /**
