@@ -7,7 +7,7 @@ namespace App\Email\Http\Controllers;
 use App\Base\Enum\Locale;
 use App\Base\Http\Controllers\Controller as BaseController;
 use App\Email\Http\Requests\SendRequest;
-use App\Interview\Services\UrlService;
+use App\Interview\Services\TokenService;
 use App\Email\Services\{SendService, CreateService};
 use App\Interview\Repositories\InterviewRepository;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +18,7 @@ final readonly class Controller extends BaseController
         public InterviewRepository $interviewRepository,
         public CreateService $createService,
         public SendService $sendService,
-        public UrlService $urlService,
+        public TokenService $tokenService,
     ) {
     }
 
@@ -36,7 +36,7 @@ final readonly class Controller extends BaseController
             return response()->json(['message' => 'InterviewMail not found'], status:404);
         }
 
-        $interviewUrl = $this->urlService->getInterviewPageUrl($interview);
+        $interviewUrl = $this->tokenService->getInterviewPageUrl($interview);
 
         $mailable = $this->sendService->getInterviewMail(
             interview: $interview,

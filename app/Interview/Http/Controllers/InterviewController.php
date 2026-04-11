@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace App\Interview\Http\Controllers;
 
+use App\Interview\Http\Resources\InterviewResource;
 use App\Interview\Models\Interview;
 use App\Interview\Models\Question;
 use App\Interview\Services\InterviewManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Base
 
-final class InterviewController extends Controller
+final readonly class InterviewController extends Controller
 {
     public function __construct(
         private InterviewManager $manager
     ) {
+    }
+
+    public function create(): InterviewResource
+    {
+        $interview = $this->manager->();
+
+        return InterviewResource::make($interview);
     }
 
     /**

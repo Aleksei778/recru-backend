@@ -20,6 +20,7 @@ final class Interview extends Model
         'token_expires_at',
         'grade',
         'text_grade',
+        'additional_info',
     ];
 
     protected $casts = [
