@@ -7,7 +7,7 @@ namespace App\Interview\Services;
 use App\Interview\Dto\Create;
 use App\Interview\Models\Interview;
 
-final readonly class CreateService
+final readonly class CrudService
 {
     public function create(Create $dto): Interview
     {

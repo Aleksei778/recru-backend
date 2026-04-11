@@ -6,25 +6,23 @@ namespace App\Interview\Services;
 
 use App\Ai\Yandex\Services\ObjectStorageService;
 use App\Interview\Enum\Status;
-use App\Interview\Models\Interview;
-use App\Interview\Models\Question;
-use App\Interview\Models\Answer;
-use Illuminate\Support\Collection;
+use App\Interview\Repositories\QuestionRepository;
+use App\Interview\Models\{Interview, Question, Answer};
 use Psr\Log\LoggerInterface;
 
-final readonly class InterviewManager
+final readonly class ManageService
 {
     public function __construct(
         private QuestionsService $questionsService,
-        private InterviewVoiceService $voiceService,
+        private ObjectStorageService $objectStorageService,
+        private QuestionRepository $questionRepository,
+        private VoiceService $voiceService,
+        private EvaluationService $evaluationService,
         private LoggerInterface $logger,
     ) {
     }
 
-    /**
-     * Запуск интервью: генерация вопросов и установка статуса.
-     */
-    public function startInterview(Interview $interview): void
+    public function start(Interview $interview): void
     {
         if (!$interview->isPending()) {
             return;
@@ -34,15 +32,9 @@ final readonly class InterviewManager
         $interview->markAsInProgress();
     }
 
-    /**
-     * Получить текущий вопрос интервью (первый без ответа).
-     */
     public function getNextQuestion(Interview $interview): ?Question
     {
-        return Question::where('interview_id', $interview->id)
-            ->whereDoesntHave('answer')
-            ->orderBy('number')
-            ->first();
+        return $this->questionRepository->getNextQuestionForInterview($interview);
     }
 
     /**
@@ -96,7 +88,6 @@ final readonly class InterviewManager
                 $this->voiceService->pollAnswerRecognition($answer);
             }
 
-            // Перепроверяем еще раз после поллинга
             $stillPending = Answer::whereHas('question', function ($q) use ($interview) {
                     $q->where('interview_id', $interview->id);
                 })
@@ -107,7 +98,7 @@ final readonly class InterviewManager
 
             if (!$stillPending) {
                 $interview->update(['status' => Status::COMPLETED]);
-                $this->interviewService->evaluateInterview($interview);
+                $this->evaluationService->evaluate($interview);
                 return true;
             }
         }

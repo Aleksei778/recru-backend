@@ -8,7 +8,7 @@ use App\Base\Enum\Locale;
 use App\Base\Http\Controllers\Controller as BaseController;
 use App\Email\Http\Requests\SendRequest;
 use App\Interview\Services\TokenService;
-use App\Email\Services\{SendService, CreateService};
+use App\Email\Services\{SendService, CrudService};
 use App\Interview\Repositories\InterviewRepository;
 use Illuminate\Http\JsonResponse;
 
@@ -16,9 +16,9 @@ final readonly class Controller extends BaseController
 {
     public function __construct(
         public InterviewRepository $interviewRepository,
-        public CreateService $createService,
-        public SendService $sendService,
-        public TokenService $tokenService,
+        public CrudService         $createService,
+        public SendService         $sendService,
+        public TokenService        $tokenService,
     ) {
     }
 

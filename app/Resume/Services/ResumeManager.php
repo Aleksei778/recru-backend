@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Resume\Services;
 
-use App\Candidate\Enum\Grade;
 use App\Candidate\Enum\Source;
 use App\Candidate\Enum\Status;
 use App\Candidate\Models\Candidate;
+use App\Candidate\Models\Social;
+use App\Candidate\Models\WorkPlace;
 use App\Resume\Dto\ParsedResumeDto;
 use App\Resume\Services\Extract\PdfExtractor;
 use Illuminate\Http\UploadedFile;
@@ -73,32 +74,51 @@ final readonly class ResumeManager
             'middle_name' => $dto->middle_name,
             'email' => $dto->email,
             'phone' => $dto->phone,
-            'linkedin_url' => $dto->linkedin_url,
-            'github_url' => $dto->github_url,
             'experience_years' => $dto->experience_years,
-            'grade' => $this->mapGrade($dto->grade),
             'education_level' => $dto->education_level,
         ];
 
         if ($candidate) {
             $candidate->update($data);
-            return $candidate;
+        } else {
+            $data['tenant_id'] = $tenantId;
+            $data['added_by_id'] = $userId;
+            $data['source'] = Source::BULK_IMPORT;
+            $data['status'] = Status::NEW;
+
+            $candidate = Candidate::create($data);
         }
 
-        $data['tenant_id'] = $tenantId;
-        $data['added_by_id'] = $userId;
-        $data['source'] = Source::BULK_IMPORT;
-        $data['status'] = Status::NEW;
+        $this->syncSocials($candidate, $dto->socials);
+        $this->syncWorkPlaces($candidate, $dto->work_places);
 
-        return Candidate::create($data);
+        return $candidate;
     }
 
-    private function mapGrade(?string $grade): ?Grade
+    private function syncSocials(Candidate $candidate, array $socials): void
     {
-        if (!$grade) {
-            return null;
+        foreach ($socials as $socialData) {
+            Social::updateOrCreate(
+                ['candidate_id' => $candidate->id, 'name' => $socialData['name']],
+                ['url' => $socialData['url']]
+            );
         }
+    }
 
-        return Grade::tryFrom(strtolower($grade));
+    private function syncWorkPlaces(Candidate $candidate, array $workPlaces): void
+    {
+        // Для простоты удалим старые и добавим новые, либо можно реализовать более сложную логику
+        $candidate->workPlaces()->delete();
+
+        foreach ($workPlaces as $wpData) {
+            WorkPlace::create([
+                'candidate_id' => $candidate->id,
+                'company_name' => $wpData['company_name'] ?? 'Unknown',
+                'position' => $wpData['position'] ?? 'Unknown',
+                'description' => $wpData['description'] ?? null,
+                'started_at' => $wpData['started_at'] ?? now()->toDateString(),
+                'ended_at' => $wpData['ended_at'] ?? null,
+            ]);
+        }
     }
 }

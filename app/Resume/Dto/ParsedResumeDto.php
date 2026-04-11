@@ -10,14 +10,14 @@ final readonly class ParsedResumeDto
         public ?string $middle_name,
         public ?string $email,
         public ?string $phone,
-        public ?string $linkedin_url,
-        public ?string $github_url,
+        public array $socials,
         public ?int $experience_years,
-        public ?string $grade,
+        public array $work_places,
         public ?string $education_level,
         public array $skills,
         public ?string $summary,
-    ) {}
+    ) {
+    }
 
     public function toArray(): array
     {
@@ -27,10 +27,9 @@ final readonly class ParsedResumeDto
             'middle_name' => $this->middle_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'linkedin_url' => $this->linkedin_url,
-            'github_url' => $this->github_url,
+            'socials' => $this->socials,
             'experience_years' => $this->experience_years,
-            'grade' => $this->grade,
+            'work_places' => $this->work_places,
             'education_level' => $this->education_level,
             'skills' => $this->skills,
             'summary' => $this->summary,

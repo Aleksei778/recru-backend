@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Candidate\Models;
 
 use App\Interview\Models\Interview;
+use App\Resume\Models\Resume;
 use App\Skill\Traits\HasSkills;
-use App\Candidate\Enum\{EducationLevel, Grade, Source, Status};
+use App\Candidate\Enum\{EducationLevel, Source, Status};
 use App\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use App\User\Models\User;
@@ -25,11 +26,7 @@ final class Candidate extends Model
         'middle_name',
         'email',
         'phone',
-        'resume_url',
-        'linkedin_url',
-        'github_url',
         'source',
-        'grade',
         'status',
         'experience_years',
         'education_level',
@@ -40,7 +37,6 @@ final class Candidate extends Model
         'education_level' => EducationLevel::class,
         'status' => Status::class,
         'source' => Source::class,
-        'grade' => Grade::class,
     ];
 
     public function tenant(): BelongsTo
@@ -56,5 +52,20 @@ final class Candidate extends Model
     public function interviews(): HasMany
     {
         return $this->hasMany(Interview::class);
+    }
+
+    public function workPlaces(): HasMany
+    {
+        return $this->hasMany(WorkPlace::class);
+    }
+
+    public function socials(): HasMany
+    {
+        return $this->hasMany(Social::class);
+    }
+
+    public function resumes(): HasMany
+    {
+        return $this->hasMany(Resume::class);
     }
 }

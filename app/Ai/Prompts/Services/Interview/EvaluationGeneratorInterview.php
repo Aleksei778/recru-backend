@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Ai\Prompts\Services;
+namespace App\Ai\Prompts\Services\Interview;
 
 use App\Ai\Yandex\Dto\Gpt\Message;
-use App\Interview\Repositories\QuestionRepository;
 use App\Interview\Models\Interview;
+use App\Interview\Repositories\QuestionRepository;
 
-final readonly class EvaluationGenerator implements PromptsGeneratorInterface
+final readonly class EvaluationGeneratorInterview implements InterviewPromptsGeneratorInterface
 {
     public function __construct(
         private QuestionRepository $questionRepository,

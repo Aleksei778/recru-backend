@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Ai\Prompts\Services;
+namespace App\Ai\Prompts\Services\Interview;
 
 use App\Ai\Yandex\Dto\Gpt\Message;
 use App\Interview\Models\Interview;
 
-final readonly class QuestionsGenerator implements PromptsGeneratorInterface
+final readonly class QuestionsGeneratorInterview implements InterviewPromptsGeneratorInterface
 {
     private function generate(Interview $interview): string
     {

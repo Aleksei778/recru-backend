@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interview\Services;
 
-use App\Ai\Prompts\Services\QuestionsGenerator;
+use App\Ai\Prompts\Services\Interview\QuestionsGeneratorInterview;
 use App\Ai\Yandex\Services\Gpt\GptService;
 use App\Interview\Models\{Interview, Question};
 use Illuminate\Support\Facades\DB;
@@ -13,9 +13,9 @@ use Psr\Log\LoggerInterface;
 final readonly class QuestionsService
 {
     public function __construct(
-        private QuestionsGenerator $questionsGenerator,
-        private GptService $gptService,
-        private LoggerInterface $logger,
+        private QuestionsGeneratorInterview $questionsGenerator,
+        private GptService                  $gptService,
+        private LoggerInterface             $logger,
     ) {
     }
 

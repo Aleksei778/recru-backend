@@ -63,7 +63,7 @@ final readonly class ManageService
 
             if (!$operation) {
                 throw new OperationNotFoundException(
-                    message: 'Operation: ManageService: updateWithLock: Operation not found'
+                    message: 'Operation: CrudService: updateWithLock: Operation not found'
                 );
             }
 

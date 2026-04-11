@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Interview\Services;
 
 use App\Interview\Models\Interview;
+use Illuminate\Support\Str;
 
 final readonly class TokenService
 {
@@ -15,6 +16,6 @@ final readonly class TokenService
 
     public function generateToken(): string
     {
-        return bin2hex(random_bytes(16));
+        return Str::random(32);
     }
 }

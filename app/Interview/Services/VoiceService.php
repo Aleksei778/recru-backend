@@ -16,7 +16,7 @@ use App\VoiceLog\Models\VoiceLog;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
-final readonly class InterviewVoiceService
+final readonly class VoiceService
 {
     public function __construct(
         private TtsService $ttsService,
@@ -26,9 +26,6 @@ final readonly class InterviewVoiceService
     ) {
     }
 
-    /**
-     * Озвучивает вопрос и сохраняет аудио в VoiceLog.
-     */
     public function synthesizeQuestion(Question $question): ?string
     {
         $request = new TtsRequest(text: $question->text);
@@ -58,9 +55,6 @@ final readonly class InterviewVoiceService
         return $this->storageService->getObjectUri($key);
     }
 
-    /**
-     * Обрабатывает аудио-ответ кандидата: загружает в S3 и отправляет на распознавание.
-     */
     public function handleAnswerAudio(Question $question, string $audioContent, string $mimeType): ?string
     {
         $answer = Answer::updateOrCreate(

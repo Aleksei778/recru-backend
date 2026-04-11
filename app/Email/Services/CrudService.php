@@ -9,7 +9,7 @@ use App\Email\Models\Email;
 use App\Interview\Models\Interview;
 use App\User\Models\User;
 
-final readonly class CreateService
+final readonly class CrudService
 {
     public function create(
         User $user,

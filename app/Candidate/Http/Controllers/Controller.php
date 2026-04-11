@@ -5,43 +5,69 @@ declare(strict_types=1);
 namespace App\Candidate\Http\Controllers;
 
 use App\Base\Http\Controllers\Controller as BaseController;
+use App\Candidate\Dto\CreateDto;
+use App\Candidate\Dto\UpdateDto;
 use App\Candidate\Http\Requests\StoreRequest as StoreCandidateRequest;
+use App\Candidate\Http\Requests\UpdateRequest as UpdateCandidateRequest;
 use App\Candidate\Http\Resources\Resource as CandidateResource;
-use App\Candidate\Models\Candidate as CandidateModel;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Candidate\Models\Candidate;
+use App\Candidate\Services\CrudService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 final readonly class Controller extends BaseController
 {
-    public function index(): ResourceCollection
+    public function __construct(
+        private CrudService $manageService,
+    ) {
+    }
+
+    public function index(): AnonymousResourceCollection
     {
-        return CandidateResource::collection(
-            CandidateModel::with(['tenant', 'addedBy', 'interview'])
-                ->paginate(15)
-        );
+        $candidates = Candidate::with(['tenant', 'addedBy', 'interviews', 'skills'])
+            ->latest()
+            ->paginate(15);
+
+        return CandidateResource::collection($candidates);
     }
 
     public function store(StoreCandidateRequest $request): CandidateResource
     {
-        $candidate = new CandidateModel($request->validated());
+        $dto = CreateDto::fromArray([
+            ...$request->validated(),
+            'added_by_id' => Auth::id(),
+        ]);
 
-        return new CandidateResource(
-            $candidate->load(['tenant', 'addedBy', 'interview'])
+        $candidate = $this->manageService->create($dto);
+
+        return CandidateResource::make(
+            $candidate->load(['tenant', 'addedBy', 'interviews'])
         );
     }
 
-    public function show(CandidateModel $candidate): CandidateResource
+    public function show(Candidate $candidate): CandidateResource
     {
-        return new CandidateResource(
-            $candidate->load(['tenant', 'addedBy', 'interview'])
+        return CandidateResource::make(
+            $candidate->load(['tenant', 'addedBy', 'interviews', 'workPlaces', 'socials', 'skills'])
         );
     }
 
-    public function destroy(CandidateModel $candidate): JsonResponse
+    public function update(UpdateCandidateRequest $request, Candidate $candidate): CandidateResource
     {
-        $candidate->delete();
+        $dto = UpdateDto::fromArray($request->validated());
 
-        return response()
-            ->json(null, 204);
+        $candidate = $this->manageService->update($candidate, $dto);
+
+        return CandidateResource::make(
+            $candidate->load(['tenant', 'addedBy', 'interviews'])
+        );
+    }
+
+    public function destroy(Candidate $candidate): Response
+    {
+        $this->manageService->delete($candidate);
+
+        return response()->noContent();
     }
 }

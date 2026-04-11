@@ -8,7 +8,7 @@ use App\Base\Enum\Locale;
 use App\Candidate\Models\Candidate;
 use App\Email\Mail\InterviewMail;
 use App\Email\Models\Email;
-use App\Email\Services\{CreateService, SendService};
+use App\Email\Services\{CrudService, SendService};
 use App\Interview\Models\Interview;
 use App\User\Models\User;
 use App\Vacancy\Models\Vacancy;
@@ -30,7 +30,7 @@ class EmailServicesTest extends TestCase
             'vacancy_id' => $vacancy->id,
         ]);
 
-        $service = new CreateService();
+        $service = new CrudService();
         $email = $service->create(
             user: $user,
             interview: $interview,

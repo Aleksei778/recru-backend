@@ -15,7 +15,7 @@ final readonly class Create
         public Candidate $candidate,
         public string $token,
         public CarbonInterface $tokenExpiresAt,
-        public string $additionalInfo,
+        public ?string $additionalInfo,
     ) {
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resume\Services;
 
+use App\Ai\Prompts\Services\Resume\ResumePromptsGeneratorInterface;
 use App\Ai\Yandex\Dto\Gpt\Message;
 use App\Ai\Yandex\Services\Gpt\GptService;
 use App\Resume\Dto\ParsedResumeDto;
@@ -14,12 +15,10 @@ final readonly class ResumeAiService
     public function __construct(
         private GptService $gptService,
         private LoggerInterface $logger,
+        private ResumePromptsGeneratorInterface $resumePromptsGenerator
     ) {
     }
 
-    /**
-     * Парсинг резюме с помощью YandexGPT.
-     */
     public function parse(string $text): ?ParsedResumeDto
     {
         $systemPrompt = <<<PROMPT
@@ -30,15 +29,14 @@ JSON должен содержать следующие поля:
 - middle_name (строка или null)
 - email (строка или null)
 - phone (строка или null)
-- linkedin_url (строка или null)
-- github_url (строка или null)
+- socials (массив объектов: [{"name": "linkedin", "url": "..."}, {"name": "github", "url": "..."}] или [])
 - experience_years (целое число или null)
-- grade (строка: junior, middle, senior, lead или null)
+- work_places (массив объектов: [{"company_name": "...", "position": "...", "description": "...", "started_at": "YYYY-MM-DD", "ended_at": "YYYY-MM-DD" или null}] или [])
 - education_level (строка или null)
 - skills (массив строк)
 - summary (краткое резюме, строка или null)
 
-Если информация отсутствует, используйте null. Возвращайте ТОЛЬКО JSON без пояснений.
+Если информация отсутствует, используйте null или пустой массив. Возвращайте ТОЛЬКО JSON без пояснений.
 PROMPT;
 
         $messages = [
@@ -63,10 +61,9 @@ PROMPT;
                 middle_name: $data['middle_name'] ?? null,
                 email: $data['email'] ?? null,
                 phone: $data['phone'] ?? null,
-                linkedin_url: $data['linkedin_url'] ?? null,
-                github_url: $data['github_url'] ?? null,
+                socials: $data['socials'] ?? [],
                 experience_years: isset($data['experience_years']) ? (int) $data['experience_years'] : null,
-                grade: $data['grade'] ?? null,
+                work_places: $data['work_places'] ?? [],
                 education_level: $data['education_level'] ?? null,
                 skills: $data['skills'] ?? [],
                 summary: $data['summary'] ?? null,
@@ -80,10 +77,7 @@ PROMPT;
         }
     }
 
-    /**
-     * AI оценка резюме.
-     */
-    public function assess(string $text): ?array
+    public function evaluate(string $text): ?array
     {
         $systemPrompt = <<<PROMPT
 Вы — опытный технический рекрутер. Оцените кандидата на основе текста его резюме.

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Interview\Services;
 
+use App\Ai\Prompts\Services\Interview\EvaluationGeneratorInterview;
 use App\Ai\Yandex\Services\Gpt\GptService;
 use App\Interview\Models\Interview;
-use App\Ai\Prompts\Services\EvaluationGenerator;
 use Psr\Log\LoggerInterface;
 
 final readonly class EvaluationService
 {
     public function __construct(
-        private EvaluationGenerator $evaluationGenerator,
-        private GptService $gptService,
-        private LoggerInterface $logger,
+        private EvaluationGeneratorInterview $evaluationGenerator,
+        private GptService                   $gptService,
+        private LoggerInterface              $logger,
     ) {
     }
 
