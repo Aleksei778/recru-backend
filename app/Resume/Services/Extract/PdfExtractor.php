@@ -11,8 +11,8 @@ use Smalot\PdfParser\Parser;
 final readonly class PdfExtractor implements ExtractorInterface
 {
     public function __construct(
-        private readonly Parser $parser,
-        private readonly LoggerInterface $logger
+        private Parser $parser,
+        private LoggerInterface $logger
     ) {
     }
 

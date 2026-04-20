@@ -19,6 +19,7 @@ final class Resume extends Model
         'storage_disk',
         'parsed_data',
         'summary',
+        'score',
     ];
 
     protected $casts = [

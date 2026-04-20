@@ -23,6 +23,11 @@ final readonly class QuestionRepository
             ->toArray();
     }
 
+    public function find(int $id): ?Question
+    {
+        return Question::find($id);
+    }
+
     public function getNextQuestionForInterview(Interview $interview): ?Question
     {
         return Question::where('interview_id', $interview->id)

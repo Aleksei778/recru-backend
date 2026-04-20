@@ -6,10 +6,16 @@ namespace App\Resume\Services\Extract;
 
 use Illuminate\Http\UploadedFile;
 
-final readonly class TxtExtractor
+final readonly class TxtExtractor implements ExtractorInterface
 {
     public function extract(UploadedFile $file): string
     {
-        return file_get_contents($file->getRealPath());
+        $content = file_get_contents($file->getRealPath());
+
+        if ($content === false) {
+            throw new \RuntimeException('Failed to read text file');
+        }
+
+        return preg_replace('/\s+/', ' ', trim($content));
     }
 }

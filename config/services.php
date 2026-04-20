@@ -28,6 +28,16 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    'yandex' => [
+        'object_storage' => [
+            'key_id' => env('YANDEX_OBJECT_STORAGE_KEY_ID'),
+            'secret' => env('YANDEX_OBJECT_STORAGE_SECRET'),
+            'bucket' => env('YANDEX_OBJECT_STORAGE_BUCKET'),
+            'region' => env('YANDEX_OBJECT_STORAGE_REGION', 'ru-central1'),
+            'endpoint' => env('YANDEX_OBJECT_STORAGE_ENDPOINT', 'https://storage.yandexcloud.net'),
+        ],
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

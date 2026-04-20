@@ -4,24 +4,27 @@ declare(strict_types=1);
 
 namespace App\VoiceLog\Models;
 
+use App\VoiceLog\Enum\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class VoiceLog extends Model
 {
     protected $fillable = [
-        'voiceable_id',
-        'voiceable_type',
+        'subject_id',
+        'subject_type',
+        'audio_path',
         'duration',
-        'size',
-        'status',
-        'mimetype',
-        'yandex_id',
-        'raw_response',
-        'try_count',
+        'type',
+        'mime_type',
     ];
 
-    public function voiceable(): MorphTo
+    protected $casts = [
+        'duration' => 'integer',
+        'type' => Type::class,
+    ];
+
+    public function subject(): MorphTo
     {
         return $this->morphTo();
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Http\Controllers\Auth;
 
-use App\Base\Http\Controllers\Controller;
+use App\Common\Http\Controllers\Controller;
 use App\User\Http\Requests\Auth\RegisterRequest;
 use App\Tenant\Models\Tenant;
 use App\User\Enum\UserRole;

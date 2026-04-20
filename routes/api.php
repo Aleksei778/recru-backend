@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Ai\Yandex\Http\Controllers\OperationController;
 use App\Interview\Http\Controllers\Controller as InterviewController;
 use App\Resume\Http\Controllers\ParseResumeController;
 use App\User\Http\Controllers\Auth\{LoginController, RegisterController};
@@ -26,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('parse/file', [ParseResumeController::class, 'parseFile']);
         Route::post('parse/string', [ParseResumeController::class, 'parseString']);
     });
+
+    Route::get('operations/{id}', [OperationController::class, 'show']);
 
     Route::prefix('emails')->group(function () {
         Route::post('send', [\App\Email\Http\Controllers\Controller::class, 'send']);

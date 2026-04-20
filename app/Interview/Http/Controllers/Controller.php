@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use App\Interview\Models\{Interview, Question};
 use App\Interview\Services\{ManageService, CrudService, TokenService};
 use Illuminate\Http\{JsonResponse, Request};
-use App\Base\Http\Controllers\Controller as BaseController;
+use App\Common\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 final readonly class Controller extends BaseController
@@ -54,56 +54,45 @@ final readonly class Controller extends BaseController
 
         $interview = $this->createService->create($dto);
 
-        return Resource::make($interview);
-    }
-
-    public function show(Interview $interview): Resource
-    {
-        $interview->load(['candidate', 'vacancy']);
 
         return Resource::make($interview);
     }
 
-    public function start(string $token): JsonResponse
+    public function nextQuestion(string $token): JsonResponse
     {
         $interview = $this->interviewRepository->findByToken($token);
 
         if (!$interview) {
-            return response()->json(['error' => 'Invalid token for interview'], 404);
+            return response()->json(['error' => 'Interview not found'], 404);
         }
 
-        $this->manageService->start($interview);
+        if ($interview->isReady()) {
+            $interview->markAsInProgress();
+        }
 
-        return response()->json(['message' => 'Interview started successfully']);
-    }
+        if (!$interview->isInProgress()) {
+            return response()->json(['error' => 'Interview not available'], 422);
+        }
 
-    public function nextQuestion(Interview $interview): JsonResponse
-    {
         $question = $this->manageService->getNextQuestion($interview);
 
         if (!$question) {
-            $isCompleted = $this->manageService->checkAndComplete($interview);
-            
-            return response()->json([
-                'status' => $isCompleted ? 'completed' : 'processing_results',
-                'grade' => $interview->grade,
-                'feedback' => $interview->text_grade,
-            ]);
+
         }
-
-        $audioUrl = $this->manager->getQuestionAudio($question);
-
-        return response()->json([
-            'question_id' => $question->id,
-            'number' => $question->number,
-            'text' => $question->text,
-            'audio_url' => $audioUrl,
-        ]);
     }
 
-    /**
-     * Отправить аудио-ответ.
-     */
+    public function show(Interview $interview): Resource
+    {
+        $interview->load([
+            'candidate',
+            'vacancy',
+            'questions',
+            'answers',
+        ]);
+
+        return Resource::make($interview);
+    }
+
     public function answer(Request $request, Question $question): JsonResponse
     {
         $audioFile = $request->file('audio');

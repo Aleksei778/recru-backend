@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Email\Http\Controllers;
 
-use App\Base\Enum\Locale;
-use App\Base\Http\Controllers\Controller as BaseController;
+use App\Common\Enum\Locale;
+use App\Common\Http\Controllers\Controller as BaseController;
 use App\Email\Http\Requests\SendRequest;
 use App\Interview\Services\TokenService;
 use App\Email\Services\{SendService, CrudService};
@@ -33,19 +33,19 @@ final readonly class Controller extends BaseController
         $interview = $this->interviewRepository->find($interviewId);
 
         if (!$interview) {
-            return response()->json(['message' => 'InterviewMail not found'], status:404);
+            return response()->json(['message' => 'InterviewInvitationMail not found'], status:404);
         }
 
         $interviewUrl = $this->tokenService->getInterviewPageUrl($interview);
 
-        $mailable = $this->sendService->getInterviewMail(
+        $mailable = $this->sendService->getInterviewInvitationMail(
             interview: $interview,
             user: $user,
             interviewUrl: $interviewUrl,
             locale: $locale,
         );
 
-        $this->sendService->sendInterviewMail($mailable);
+        $this->sendService->sendInterviewInvitationMail($mailable);
 
         $this->createService->create(
             user: $user,

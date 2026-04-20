@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Resume\Http\Controllers;
 
-use App\Base\Enum\Locale;
-use App\Base\Http\Controllers\Controller;
+use App\Common\Enum\Locale;
+use App\Common\Http\Controllers\Controller;
 use App\Resume\Http\Requests\{StringRequest, FileRequest};
 use Illuminate\Http\JsonResponse;
 use App\Resume\Services\Extract\{PdfExtractor, TxtExtractor};
 use App\Resume\Services\Parser;
-use App\Resume\Services\ResumeManager;
+use App\Resume\Services\FileUploadService;
 use Illuminate\Support\Facades\Auth;
 
 final readonly class ParseResumeController extends Controller
 {
     public function __construct(
-        private Parser       $parser,
-        private PdfExtractor $pdfExtractor,
-        private TxtExtractor $textExtractor,
-        private ResumeManager $resumeManager,
+        private Parser            $parser,
+        private PdfExtractor      $pdfExtractor,
+        private TxtExtractor      $textExtractor,
+        private FileUploadService $resumeManager,
     ) {
     }
 
@@ -29,7 +29,7 @@ final readonly class ParseResumeController extends Controller
         $file = $request->file('resume');
 
         if ($file->getClientMimeType() === 'application/pdf') {
-            $result = $this->resumeManager->handlePdfUpload(
+            $result = $this->resumeManager->handlePdfUploadAsync(
                 $file,
                 Auth::user()?->tenant_id,
                 Auth::id()
