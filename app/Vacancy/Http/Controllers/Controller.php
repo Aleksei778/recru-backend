@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Vacancy\Http\Controllers;
 
-use App\Base\Http\Controllers\Controller as BaseController;
+use App\Common\Http\Controllers\Controller as BaseController;
 use App\Vacancy\Http\Requests\StoreRequest;
 use App\Vacancy\Http\Requests\UpdateRequest;
 use App\Vacancy\Http\Resources\Resource;

@@ -4,44 +4,67 @@ declare(strict_types=1);
 
 namespace App\Interview\Services;
 
-use App\Ai\Prompts\Services\Interview\EvaluationGeneratorInterview;
-use App\Ai\Yandex\Services\Gpt\GptService;
+use App\Ai\Gpt\Contracts\AsyncInterface;
+use App\Ai\Operation\Dto\Create;
+use App\Ai\Operation\Enum\Status;
+use App\Ai\Operation\Enum\Type;
+use App\Ai\Operation\Services\CrudService;
+use App\Ai\Gpt\Prompts\Interview\EvalGenerator;
+use App\Email\Jobs\QuestionsReadyNotifyUserJob;
 use App\Interview\Models\Interview;
 use Psr\Log\LoggerInterface;
 
 final readonly class EvaluationService
 {
     public function __construct(
-        private EvaluationGeneratorInterview $evaluationGenerator,
-        private GptService                   $gptService,
-        private LoggerInterface              $logger,
+        private EvalGenerator $evaluationGenerator,
+        private AsyncInterface $gptService,
+        private CrudService $operationCrudService,
+        private LoggerInterface $logger,
     ) {
     }
 
     public function evaluate(Interview $interview): bool
     {
-        $response = $this->gptService->completion(
+        $externalId = $this->gptService->completionAsync(
             messages: $this->evaluationGenerator->messages($interview)
         );
 
-        if (!$response) {
-            $this->logger->error('Failed to evaluate interview', [
+        if (!$externalId) {
+            $this->logger->error('Failed to submit evaluation', [
                 'interview_id' => $interview->id,
             ]);
-
             return false;
         }
 
-        $result = $this->jsonDecode(
-            json: $this->markdownClean($response),
+        $operation = $this->operationCrudService->create(new Create(
+            type: Type::InterviewEvaluationGpt,
+            subjectId: $interview->id,
+            subjectType: Interview::class,
+            provider: config('ai.provider'),
+            providerId: $externalId,
+            status: Status::Pending,
+        ));
+
+        CheckOperation::dispatch($operation)->delay(now()->addSeconds(3));
+
+        $interview->markAsEvaluating();
+
+        return true;
+    }
+
+    public function handleResult(Interview $interview, string $raw): void
+    {
+        $result = json_decode(
+            $this->markdownClean($raw),
+            associative: true
         );
 
         if (!$result) {
-            $this->logger->error('No result from evaluation after json decode', [
+            $this->logger->error('Failed to decode evaluation result', [
                 'interview_id' => $interview->id,
             ]);
-
-            return false;
+            return;
         }
 
         $interview->update([
@@ -49,20 +72,13 @@ final readonly class EvaluationService
             'text_grade' => $result['feedback'] ?? '',
         ]);
 
-        return true;
+        $interview->markAsEvaluated();
+
+        QuestionsReadyNotifyUserJob::dispatch($interview);
     }
 
     private function markdownClean(string $response): string
     {
-        return preg_replace(
-            pattern: '/```json|```/',
-            replacement: '',
-            subject: $response
-        );
-    }
-
-    private function jsonDecode(string $json): array
-    {
-        return json_decode($json, associative: true);
+        return preg_replace('/```json|```/', '', $response);
     }
 }

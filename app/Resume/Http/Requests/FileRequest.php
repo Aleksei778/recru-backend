@@ -2,7 +2,7 @@
 
 namespace App\Resume\Http\Requests;
 
-use App\Base\Enum\Locale;
+use App\Common\Enum\Locale;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 

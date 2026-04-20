@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Base;
 
+use App\Ai\Common\Model\Operation;
 use App\Ai\Yandex\Enum\{OperationStatus, OperationType};
-use App\Ai\Yandex\Models\Operation;
 use App\Interview\Models\Interview;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

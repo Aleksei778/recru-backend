@@ -4,32 +4,29 @@ declare(strict_types=1);
 
 namespace App\Interview\Services;
 
-use App\Ai\Yandex\Services\ObjectStorageService;
-use App\Interview\Enum\Status;
+use App\Ai\Operation\Dto\Create as OperationCreateDto;
+use App\Ai\Operation\Enum\Status as OperationStatus;
+use App\Ai\Operation\Enum\Type as OperationType;
+use App\Ai\Operation\Services\CrudService as OperationCrudService;
+use App\Ai\Stt\Job\ProcessSttJob;
+use App\Common\Services\Storage;
 use App\Interview\Repositories\QuestionRepository;
-use App\Interview\Models\{Interview, Question, Answer};
-use Psr\Log\LoggerInterface;
+use App\VoiceLog\Dto\Create as VoiceLogCreateDto;
+use App\VoiceLog\Enum\Type as VoiceLogType;
+use App\Interview\Services\Answers\{StoragePathHelper, CrudService as AnswersCrudService};
+use Illuminate\Http\UploadedFile;
+use App\Interview\Models\{Answer, Interview, Question};
+use App\VoiceLog\Services\CrudService as VoiceLogCrudService;
 
 final readonly class ManageService
 {
     public function __construct(
-        private QuestionsService $questionsService,
-        private ObjectStorageService $objectStorageService,
         private QuestionRepository $questionRepository,
-        private VoiceService $voiceService,
-        private EvaluationService $evaluationService,
-        private LoggerInterface $logger,
+        private Storage $storage,
+        private AnswersCrudService $answersCrudService,
+        private VoiceLogCrudService $voiceLogCrudService,
+        private OperationCrudService $operationCrudService,
     ) {
-    }
-
-    public function start(Interview $interview): void
-    {
-        if (!$interview->isPending()) {
-            return;
-        }
-
-        $this->questionsService->generate($interview);
-        $interview->markAsInProgress();
     }
 
     public function getNextQuestion(Interview $interview): ?Question
@@ -37,72 +34,48 @@ final readonly class ManageService
         return $this->questionRepository->getNextQuestionForInterview($interview);
     }
 
-    /**
-     * Получить аудио-ссылку для вопроса (с генерацией если нужно).
-     */
-    public function getQuestionAudio(Question $question): ?string
+    public function submitAnswer(Question $question, UploadedFile $audio): void
     {
-        $voiceLog = $question->voiceLog;
-        
-        if ($voiceLog && $voiceLog->status === 'completed') {
-            // В идеале тут нужен доступ к S3 для получения ссылки, 
-            // но в нашей упрощенной модели мы пересоздаем пресайнд ссылку
-            return app(ObjectStorageService::class)->getObjectUri($voiceLog->yandex_id);
-        }
+        $storageProvider = config('app.storage_provider');
 
-        return $this->voiceService->synthesizeQuestion($question);
+        $path = StoragePathHelper::getStoragePath($question);
+        $this->storage->put($storageProvider, $path, $audio->getContent());
+
+        $answer = $this->answersCrudService->create($question);
+
+        $voiceLogCreateDto = new VoiceLogCreateDto(
+            subjectId: $answer->id,
+            subjectType: Answer::class,
+            audioPath: $path,
+            mimeType: $audio->getMimeType(),
+            type: VoiceLogType::Stt,
+        );
+        $this->voiceLogCrudService->create($voiceLogCreateDto);
     }
 
-    /**
-     * Обработка ответа кандидата.
-     */
-    public function submitAnswer(Question $question, string $audioContent, string $mimeType): string
+    public function complete(Interview $interview): void
     {
-        $operationId = $this->voiceService->handleAnswerAudio($question, $audioContent, $mimeType);
-        
-        // Если это был последний вопрос, можно запустить проверку завершения асинхронно
-        return $operationId;
-    }
+        $interview->markAsProcessing();
 
-    /**
-     * Проверка завершения интервью и запуск оценки.
-     */
-    public function checkAndComplete(Interview $interview): bool
-    {
-        $totalQuestions = Question::where('interview_id', $interview->id)->count();
-        $answeredQuestions = Answer::whereHas('question', function ($q) use ($interview) {
-            $q->where('interview_id', $interview->id);
-        })->count();
+        $interview->questions->each(function (Question $question) {
+            $answer = $question->answer;
 
-        if ($totalQuestions > 0 && $totalQuestions === $answeredQuestions) {
-            // Все ответы получены, но нужно дождаться окончания STT для всех ответов
-            $pendingStt = Answer::whereHas('question', function ($q) use ($interview) {
-                    $q->where('interview_id', $interview->id);
-                })
-                ->whereHas('voiceLog', function ($v) {
-                    $v->where('status', 'processing');
-                })
-                ->get();
-
-            foreach ($pendingStt as $answer) {
-                $this->voiceService->pollAnswerRecognition($answer);
+            if (!$answer) {
+                return;
             }
 
-            $stillPending = Answer::whereHas('question', function ($q) use ($interview) {
-                    $q->where('interview_id', $interview->id);
-                })
-                ->whereHas('voiceLog', function ($v) {
-                    $v->where('status', 'processing');
-                })
-                ->exists();
+            $operationDto = new OperationCreateDto(
+                type: OperationType::InterviewAnswersStt,
+                subjectId: $answer->id,
+                subjectType: Answer::class,
+                provider: config('ai.provider'),
+                providerId: '',
+                status: OperationStatus::Pending,
+            );
 
-            if (!$stillPending) {
-                $interview->update(['status' => Status::COMPLETED]);
-                $this->evaluationService->evaluate($interview);
-                return true;
-            }
-        }
+            $operation = $this->operationCrudService->create($operationDto);
 
-        return false;
+            ProcessSttJob::dispatch($operation)->delay(now()->addSeconds(5));
+        });
     }
 }

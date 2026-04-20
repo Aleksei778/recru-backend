@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Controllers;
 
-use App\Base\Http\Controllers\Controller as BaseController;
-use App\Candidate\Dto\CreateDto;
-use App\Candidate\Dto\UpdateDto;
+use App\Common\Http\Controllers\Controller as BaseController;
+use App\Candidate\Dto\Candidate\Create;
+use App\Candidate\Dto\Candidate\Update;
 use App\Candidate\Http\Requests\StoreRequest as StoreCandidateRequest;
 use App\Candidate\Http\Requests\UpdateRequest as UpdateCandidateRequest;
 use App\Candidate\Http\Resources\Resource as CandidateResource;
@@ -34,7 +34,7 @@ final readonly class Controller extends BaseController
 
     public function store(StoreCandidateRequest $request): CandidateResource
     {
-        $dto = CreateDto::fromArray([
+        $dto = Create::fromArray([
             ...$request->validated(),
             'added_by_id' => Auth::id(),
         ]);
@@ -55,7 +55,7 @@ final readonly class Controller extends BaseController
 
     public function update(UpdateCandidateRequest $request, Candidate $candidate): CandidateResource
     {
-        $dto = UpdateDto::fromArray($request->validated());
+        $dto = Update::fromArray($request->validated());
 
         $candidate = $this->manageService->update($candidate, $dto);
 

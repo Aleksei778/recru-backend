@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Email\Models;
 
-use App\Base\Enum\Locale;
+use App\Common\Enum\Locale;
 use App\User\Models\User;
 use App\Interview\Models\Interview;
 use Illuminate\Database\Eloquent\Model;

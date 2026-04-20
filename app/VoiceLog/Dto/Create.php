@@ -4,17 +4,27 @@ declare(strict_types=1);
 
 namespace App\VoiceLog\Dto;
 
-use App\VoiceLog\Enum\Status;
+use App\VoiceLog\Enum\Type;
 
-class Create
+final readonly class Create
 {
     public function __construct(
-        public string $yandexId,
-        public int $duration,
-        public int $size,
+        public int $subjectId,
+        public string $subjectType,
+        public string $audioPath,
         public string $mimeType,
-        public Status $status = Status::New,
-        public ?array $rawResponse = null,
+        public Type $type,
     ) {
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'subject_id' => $this->subjectId,
+            'subject_type' => $this->subjectType,
+            'audio_path' => $this->audioPath,
+            'mime_type' => $this->mimeType,
+            'type' => $this->type->value,
+        ];
     }
 }
