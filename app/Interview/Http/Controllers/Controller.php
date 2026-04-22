@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Interview\Http\Controllers;
 
 use App\Candidate\Repositories\CandidateRepository;
+use App\Common\Services\Storage;
 use App\Interview\Dto\Create;
 use App\Interview\Http\Requests\StoreRequest;
 use App\Interview\Http\Resources\Resource;
-use App\Interview\Repositories\InterviewRepository;
+use App\Interview\Repositories\Repository;
 use App\Vacancy\Repositories\VacancyRepository;
 use Carbon\Carbon;
 use App\Interview\Models\{Interview, Question};
@@ -20,12 +21,13 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 final readonly class Controller extends BaseController
 {
     public function __construct(
-        private ManageService $manageService,
-        private CrudService $createService,
-        private InterviewRepository $interviewRepository,
-        private VacancyRepository $vacancyRepository,
+        private ManageService       $manageService,
+        private CrudService         $createService,
+        private Repository          $interviewRepository,
+        private VacancyRepository   $vacancyRepository,
         private CandidateRepository $candidateRepository,
-        private TokenService $tokenService,
+        private TokenService        $tokenService,
+        private Storage             $storage,
     ) {
     }
 
@@ -77,8 +79,18 @@ final readonly class Controller extends BaseController
         $question = $this->manageService->getNextQuestion($interview);
 
         if (!$question) {
+            $this->manageService->complete($interview);
 
+            return response()->json(['status' => 'completed']);
         }
+
+        return response()->json([
+            'question' => $question,
+            'audio_url' => $this->storage->url(
+                disk: 'yandex_object_storage',
+                path: $question->voiceLog->audio_path
+            ),
+        ]);
     }
 
     public function show(Interview $interview): Resource
@@ -93,23 +105,25 @@ final readonly class Controller extends BaseController
         return Resource::make($interview);
     }
 
-    public function answer(Request $request, Question $question): JsonResponse
-    {
-        $audioFile = $request->file('audio');
-        
-        if (!$audioFile) {
-            return response()->json(['error' => 'No audio file provided'], 400);
+    public function answer(
+        Request $request,
+        string $token,
+        Question $question
+    ): JsonResponse {
+        $interview = $this->interviewRepository->findByToken($token);
+
+        if (!$interview?->isInProgress()) {
+            return response()->json(['error' => 'Interview not in progress'], 422);
         }
 
-        $operationId = $this->manager->submitAnswer(
-            $question,
-            file_get_contents($audioFile->getRealPath()),
-            $audioFile->getMimeType()
-        );
+        $audio = $request->file('audio');
 
-        return response()->json([
-            'status' => 'submitted',
-            'operation_id' => $operationId,
-        ]);
+        if (!$audio) {
+            return response()->json(['error' => 'No audio provided'], 400);
+        }
+
+        $this->manageService->submitAnswer($question, $audio);
+
+        return response()->json(['status' => 'ok']);
     }
 }

@@ -14,13 +14,11 @@ class VoiceLog extends Model
         'subject_id',
         'subject_type',
         'audio_path',
-        'duration',
         'type',
         'mime_type',
     ];
 
     protected $casts = [
-        'duration' => 'integer',
         'type' => Type::class,
     ];
 

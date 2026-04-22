@@ -43,14 +43,13 @@ final readonly class ManageService
 
         $answer = $this->answersCrudService->create($question);
 
-        $voiceLogCreateDto = new VoiceLogCreateDto(
+        $this->voiceLogCrudService->create(new VoiceLogCreateDto(
             subjectId: $answer->id,
             subjectType: Answer::class,
             audioPath: $path,
             mimeType: $audio->getMimeType(),
-            type: VoiceLogType::Stt,
-        );
-        $this->voiceLogCrudService->create($voiceLogCreateDto);
+            type: VoiceLogType::Stt
+        ));
     }
 
     public function complete(Interview $interview): void

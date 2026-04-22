@@ -90,4 +90,9 @@ final class Interview extends Model
     {
         $this->update(['status' => Status::Evaluating]);
     }
+
+    public function markAsEvaluated(): void
+    {
+        $this->update(['status' => Status::Evaluated]);
+    }
 }

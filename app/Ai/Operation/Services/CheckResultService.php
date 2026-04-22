@@ -6,10 +6,11 @@ namespace App\Ai\Operation\Services;
 
 use App\Ai\Operation\Contracts\AsyncInterface as OperationAsyncInterface;
 use App\Ai\Stt\Contracts\AsyncInterface as SttAsyncInterface;
+use App\Interview\Services\EvaluationService;
 use App\Ai\Operation\Enum\{CheckResult, Status, Type};
 use App\Ai\Operation\Models\Operation;
 use App\Ai\Operation\Repositories\Repository;
-use App\Interview\Services\{EvaluationService, Questions\GenerateService, QuestionsService};
+use App\Interview\Services\Questions\GenerateService;
 use App\Interview\Jobs\CheckAllAnswersReadyJob;
 use App\Interview\Models\Answer;
 use Psr\Log\LoggerInterface;
@@ -72,7 +73,7 @@ final readonly class CheckResultService
             return CheckResult::Done;
 
         } catch (\Exception $e) {
-            $this->logger->error("Error checking operation {$operation->provider_id}", [
+            $this->logger->error("Error checking operation $operation->provider_id", [
                 'message' => $e->getMessage(),
             ]);
 
@@ -84,8 +85,8 @@ final readonly class CheckResultService
     {
         match ($operation->type) {
             Type::InterviewAnswersStt => $this->handleStt($operation, $raw),
-            Type::InterviewEvaluationGpt => $this->evaluationService->handleResult($operation->subject, $raw),
-            Type::InterviewQuestionsGenerationGpt => $this->questionsService->handleGenerationResult($operation->subject, $raw),
+            Type::InterviewEvaluationGpt => $this->evaluationService->handleEvaluationResult($operation->subject, $raw),
+            Type::InterviewQuestionsGenerationGpt => $this->generateService->handleGenerationResult($operation->subject, $raw),
         };
     }
 

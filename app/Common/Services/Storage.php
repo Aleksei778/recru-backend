@@ -15,4 +15,9 @@ final readonly class Storage
     ): void {
         StorageFacade::disk($disk)->put($path, $content);
     }
+
+    public function url(string $disk, string $path): string
+    {
+        return StorageFacade::disk($disk)->url($path);
+    }
 }

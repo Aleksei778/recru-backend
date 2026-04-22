@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Interview\Services;
 
 use App\Ai\Gpt\Contracts\AsyncInterface;
-use App\Ai\Operation\Dto\Create;
-use App\Ai\Operation\Enum\Status;
-use App\Ai\Operation\Enum\Type;
-use App\Ai\Operation\Services\CrudService;
 use App\Ai\Gpt\Prompts\Interview\EvalGenerator;
+use App\Ai\Operation\Dto\Create;
+use App\Ai\Operation\Enum\{Status, Type};
+use App\Ai\Operation\Jobs\CheckOperationJob;
+use App\Ai\Operation\Services\CrudService;
+use App\Common\Enum\Locale;
 use App\Email\Jobs\QuestionsReadyNotifyUserJob;
 use App\Interview\Models\Interview;
 use Psr\Log\LoggerInterface;
@@ -34,6 +35,7 @@ final readonly class EvaluationService
             $this->logger->error('Failed to submit evaluation', [
                 'interview_id' => $interview->id,
             ]);
+
             return false;
         }
 
@@ -46,14 +48,12 @@ final readonly class EvaluationService
             status: Status::Pending,
         ));
 
-        CheckOperation::dispatch($operation)->delay(now()->addSeconds(3));
-
-        $interview->markAsEvaluating();
+        CheckOperationJob::dispatch($operation)->delay(now()->addSeconds(3));
 
         return true;
     }
 
-    public function handleResult(Interview $interview, string $raw): void
+    public function handleEvaluationResult(Interview $interview, string $raw): void
     {
         $result = json_decode(
             $this->markdownClean($raw),
@@ -74,11 +74,15 @@ final readonly class EvaluationService
 
         $interview->markAsEvaluated();
 
-        QuestionsReadyNotifyUserJob::dispatch($interview);
+        $hr = $interview->vacancy->createdBy;
+        $locale = Locale::from(config('app.locale', 'ru'));
+
+        QuestionsReadyNotifyUserJob::dispatch($interview, $hr, $locale);
     }
 
     private function markdownClean(string $response): string
     {
-        return preg_replace('/```json|```/', '', $response);
+        $cleaned = preg_replace('/```json\s*|```\s*/', '', $response);
+        return trim($cleaned);
     }
 }

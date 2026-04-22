@@ -7,7 +7,7 @@ namespace App\Candidate\Models;
 use App\Interview\Models\Interview;
 use App\Resume\Models\Resume;
 use App\Skill\Traits\HasSkills;
-use App\Candidate\Enum\{EducationLevel, Source, Status};
+use App\Candidate\Enum\{EducationLevel, Source, Status, Grade};
 use App\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use App\User\Models\User;
@@ -27,6 +27,7 @@ final class Candidate extends Model
         'email',
         'phone',
         'source',
+        'grade',
         'status',
         'experience_years',
         'education_level',
@@ -34,6 +35,7 @@ final class Candidate extends Model
     ];
 
     protected $casts = [
+        'grade' => Grade::class,
         'education_level' => EducationLevel::class,
         'status' => Status::class,
         'source' => Source::class,

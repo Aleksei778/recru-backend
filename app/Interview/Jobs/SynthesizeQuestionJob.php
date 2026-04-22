@@ -6,12 +6,15 @@ namespace App\Interview\Jobs;
 
 use App\Ai\Tts\Contracts\SyncInterface;
 use App\Interview\Models\Question;
-use App\Interview\Services\QuestionsService;
+use App\Interview\Services\Questions\StoragePathHelper;
+use App\VoiceLog\Services\CrudService as VoiceLogCrudService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
 use Illuminate\Support\Facades\Storage;
+use App\VoiceLog\Enum\Type as VoiceLogType;
+use App\VoiceLog\Dto\Create as VoiceLogCreateDto;
 
 final class SynthesizeQuestionJob implements ShouldQueue
 {
@@ -26,7 +29,9 @@ final class SynthesizeQuestionJob implements ShouldQueue
 
     public function handle(
         SyncInterface $tts,
-        QuestionsService $questionsService,
+        StoragePathHelper $storagePathHelper,
+        Storage $storage,
+        VoiceLogCrudService $voiceLogCrudService,
     ): void {
         $result = $tts->synthesize($this->question->text);
 
@@ -36,9 +41,15 @@ final class SynthesizeQuestionJob implements ShouldQueue
             return;
         }
 
-        $path = $questionsService->getStoragePath($this->question->id);
-        Storage::disk('yandex_object_storage')->put($path, $result->audioContent);
+        $path = $storagePathHelper->getStoragePath($this->question->id);
+        $storage->put('yandex_object_storage', $path, $result->audioContent);
 
-        $this->question->update(['audio_path' => $path]);
+        $voiceLogCrudService->create(new VoiceLogCreateDto(
+            subjectId: $this->question->id,
+            subjectType: Question::class,
+            audioPath: $path,
+            mimeType: $result->mimeType,
+            type: VoiceLogType::Tts,
+        ));
     }
 }
