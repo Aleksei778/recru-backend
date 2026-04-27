@@ -6,16 +6,29 @@ namespace App\User\Http\Controllers\Auth;
 
 use App\Common\Http\Controllers\Controller;
 use App\User\Http\Requests\Auth\LoginRequest;
-use App\User\Models\User;
+use App\User\Repositories\Repository as UserRepository;
+use App\Tenant\Services\{CrudService as TenantCrudService};
+use App\User\Services\{
+    CrudService as UserCrudService,
+    TokenService as UserTokenService,
+};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 final readonly class LoginController extends Controller
 {
+    public function __construct(
+        private UserRepository $userRepository,
+        private UserCrudService $userCrudService,
+        private TenantCrudService $tenantCrudService,
+        private UserTokenService $userTokenService,
+    ) {
+    }
+
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::where('email', $request->email)->first();
+        $user = $this->userRepository->findByEmail($request->email);
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return new JsonResponse([
@@ -27,9 +40,9 @@ final readonly class LoginController extends Controller
         }
 
         $user->load('tenant');
-        $user->tokens()->delete();
+        $this->userTokenService->dropAll($user);
 
-        $token = $user->createToken('recru-hr-token')->plainTextToken;
+        $token = $this->userTokenService->generate($user);
 
         return new JsonResponse([
             'user' => $user,
@@ -40,7 +53,7 @@ final readonly class LoginController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->userTokenService->dropCurrent($request->user());
 
         return new JsonResponse([
             'message' => 'Successfully logged out.',

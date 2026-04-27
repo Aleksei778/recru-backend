@@ -24,6 +24,7 @@ final class Email extends Model
         'status',
         'type',
         'locale',
+        'subject',
         'sent_at',
     ];
 

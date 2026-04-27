@@ -25,4 +25,9 @@ class Answer extends Model
     {
         return $this->morphOne(VoiceLog::class, 'voiceable');
     }
+
+    public function setText(string $text): void
+    {
+        $this->update(['text' => $text]);
+    }
 }

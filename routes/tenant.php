@@ -2,42 +2,43 @@
 
 declare(strict_types=1);
 
-use App\Tenant\Http\Controllers\Auth\LoginController;
-use App\Tenant\Http\Controllers\Auth\RegisterController;
+use App\Ai\Operation\Http\Controllers\Controller as OperationController;
+use App\Candidate\Http\Controllers\Controller as CandidateController;
+use App\Email\Http\Controllers\Controller as EmailController;
+use App\Interview\Http\Controllers\Controller as InterviewController;
+use App\Resume\Http\Controllers\Controller as ResumeController;
+use App\Vacancy\Http\Controllers\Controller as VacancyController;
 use Illuminate\Support\Facades\Route;
-use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-/*
-|--------------------------------------------------------------------------
-| Tenant Routes
-|--------------------------------------------------------------------------
-|
-| Here you can register the tenant routes for your application.
-| These routes are loaded by the TenantRouteServiceProvider.
-|
-| Feel free to customize them however you want. Good luck!
-|
-*/
+Route::prefix('api')->group(function () {
+    Route::prefix('interviews')->group(function () {
+        Route::get('{token}/next', [InterviewController::class, 'nextQuestion']);
+        Route::post('{token}/questions/{question}/answer', [InterviewController::class, 'answer']);
+    });
 
-//Route::middleware([
-//    'web',
-//    InitializeTenancyBySubdomain::class,
-//    PreventAccessFromCentralDomains::class,
-//])->group(function () {
-//    Route::post('register', [RegisterController::class, 'register'])
-//        ->name('register')
-//        ->middleware('guest:tenant-web');
-//
-//    Route::post('login', [LoginController::class, 'login'])
-//        ->name('login')
-//        ->middleware('guest:tenant-web');
-//
-//    Route::post('logout', [LoginController::class, 'logout'])
-//        ->name('logout')
-//        ->middleware('auth:tenant-web');
-//
-//    Route::get('logout', [LoginController::class, 'user'])
-//        ->name('user')
-//        ->middleware('auth:tenant-web');
-//});
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('interviews', InterviewController::class)
+            ->only(['index', 'store', 'show']);
+
+        Route::prefix('interviews/{interview}')->group(function () {
+            Route::put('questions', [InterviewController::class, 'updateQuestions']);
+            Route::post('questions/approve', [InterviewController::class, 'approveQuestions']);
+            Route::post('close', [InterviewController::class, 'close']);
+        });
+
+        Route::apiResource('vacancies', VacancyController::class);
+        Route::apiResource('candidates', CandidateController::class);
+
+        Route::prefix('resumes')->group(function () {
+            Route::post('parse/file', [ResumeController::class, 'parseFile']);
+            Route::post('parse/string', [ResumeController::class, 'parseString']);
+        });
+
+        Route::get('operations/{operation}', [OperationController::class, 'status']);
+
+        Route::prefix('emails')->group(function () {
+            Route::get('/', [EmailController::class, 'index']);
+            Route::post('send', [EmailController::class, 'send']);
+        });
+    });
+});

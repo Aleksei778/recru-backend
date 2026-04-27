@@ -4,26 +4,32 @@ declare(strict_types=1);
 
 namespace App\Ai\Operation\Services;
 
-use App\Ai\Operation\Contracts\AsyncInterface as OperationAsyncInterface;
-use App\Ai\Stt\Contracts\AsyncInterface as SttAsyncInterface;
-use App\Interview\Services\EvaluationService;
-use App\Ai\Operation\Enum\{CheckResult, Status, Type};
+use App\Ai\Operation\Enum\{CheckResult, Type};
 use App\Ai\Operation\Models\Operation;
+use App\Ai\Operation\Providers\OperationInterface as OperationAsyncInterface;
 use App\Ai\Operation\Repositories\Repository;
 use App\Interview\Services\Questions\GenerateService;
-use App\Interview\Jobs\CheckAllAnswersReadyJob;
-use App\Interview\Models\Answer;
 use Psr\Log\LoggerInterface;
+use App\Resume\Services\{
+    EvaluationService as ResumeEvaluationService,
+    ParseService as ResumeParseService
+};
+use App\Interview\Services\{
+    Answers\GetAnswerFromSttOperationService,
+    EvaluationService as InterviewEvaluationService
+};
 
 final readonly class CheckResultService
 {
     public function __construct(
         private OperationAsyncInterface $operationInfo,
-        private SttAsyncInterface $stt,
         private GenerateService $generateService,
         private Repository $operationRepository,
-        private EvaluationService $evaluationService,
+        private InterviewEvaluationService $interviewEvaluationService,
+        private ResumeEvaluationService $resumeEvaluationService,
+        private ResumeParseService $resumeParseService,
         private LoggerInterface $logger,
+        private GetAnswerFromSttOperationService $getAnswerFromSttOperationService,
     ) {
     }
 
@@ -48,10 +54,7 @@ final readonly class CheckResultService
             }
 
             if ($this->operationInfo->hasError($data)) {
-                $operation->update([
-                    'status' => Status::Failed,
-                    'raw_response' => $data,
-                ]);
+                $operation->markAsFailed($data);
 
                 $this->logger->error("Operation {$operation->provider_id} failed", [
                     'error' => $data['error'] ?? null,
@@ -60,15 +63,17 @@ final readonly class CheckResultService
                 return CheckResult::Failed;
             }
 
-            $raw = $this->stt->getRecognitionResult($operation->type, $data);
+            $raw = $this->extractRaw($operation->type, $data);
+
+            if (is_null($raw)) {
+                $this->logger->error("Failed to extract raw result for operation $operation->provider_id");
+
+                return CheckResult::Failed;
+            }
 
             $this->handleResult($operation, $raw);
 
-            $operation->update([
-                'status'       => Status::Completed,
-                'raw_response' => $data,
-                'result'       => $raw,
-            ]);
+            $operation->markAsCompleted($data, $raw);
 
             return CheckResult::Done;
 
@@ -81,37 +86,28 @@ final readonly class CheckResultService
         }
     }
 
-    private function handleResult(Operation $operation, string $raw): void
-    {
-        match ($operation->type) {
-            Type::InterviewAnswersStt => $this->handleStt($operation, $raw),
-            Type::InterviewEvaluationGpt => $this->evaluationService->handleEvaluationResult($operation->subject, $raw),
-            Type::InterviewQuestionsGenerationGpt => $this->generateService->handleGenerationResult($operation->subject, $raw),
-        };
-    }
-
-    private function handleStt(Operation $operation, string $transcript): void
-    {
-        /** @var Answer $answer */
-        $answer = $operation->subject;
-
-        $answer->update(['text' => $transcript]);
-
-        CheckAllAnswersReadyJob::dispatch($answer->question->interview);
-    }
-
-    private function extractRaw(Type $type, array $data): string
+    private function extractRaw(Type $type, array $data): ?string
     {
         return match ($type) {
             Type::InterviewAnswersStt => $this->extractSttText($data),
-            default => $data['response']['alternatives'][0]['message']['text'] ?? '',
+            default => $data['response']['alternatives'][0]['message']['text'] ?? null,
+        };
+    }
+
+    private function handleResult(Operation $operation, string $raw): void
+    {
+        match ($operation->type) {
+            Type::InterviewAnswersStt => $this->getAnswerFromSttOperationService->get($operation, $raw),
+            Type::InterviewEvaluationGpt => $this->interviewEvaluationService->handleEvaluationResult($operation->subject, $raw),
+            Type::InterviewQuestionsGenerationGpt => $this->generateService->handleGenerationResult($operation->subject, $raw),
+            Type::ResumeEvaluationGpt => $this->resumeEvaluationService->handleEvaluationResult($operation->subject, $raw),
+            Type::ResumeParsingGpt => $this->resumeParseService->handleParsedResult($operation->subject, $raw),
         };
     }
 
     private function extractSttText(array $data): string
     {
         $chunks = $data['response']['chunks'] ?? [];
-
         return trim(implode(' ', array_map(
             fn($chunk) => $chunk['alternatives'][0]['text'] ?? '',
             $chunks

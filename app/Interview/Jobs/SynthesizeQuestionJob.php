@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Interview\Jobs;
 
-use App\Ai\Tts\Contracts\SyncInterface;
+use App\Ai\Tts\Providers\TtsInterface;
 use App\Interview\Models\Question;
 use App\Interview\Services\Questions\StoragePathHelper;
+use App\VoiceLog\Dto\Create as VoiceLogCreateDto;
+use App\VoiceLog\Enum\Type as VoiceLogType;
 use App\VoiceLog\Services\CrudService as VoiceLogCrudService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
 use Illuminate\Support\Facades\Storage;
-use App\VoiceLog\Enum\Type as VoiceLogType;
-use App\VoiceLog\Dto\Create as VoiceLogCreateDto;
 
 final class SynthesizeQuestionJob implements ShouldQueue
 {
@@ -28,9 +28,9 @@ final class SynthesizeQuestionJob implements ShouldQueue
     }
 
     public function handle(
-        SyncInterface $tts,
-        StoragePathHelper $storagePathHelper,
-        Storage $storage,
+        TtsInterface        $tts,
+        StoragePathHelper   $storagePathHelper,
+        Storage             $storage,
         VoiceLogCrudService $voiceLogCrudService,
     ): void {
         $result = $tts->synthesize($this->question->text);

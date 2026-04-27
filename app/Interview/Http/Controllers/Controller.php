@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interview\Http\Controllers;
 
-use App\Candidate\Repositories\CandidateRepository;
+use App\Candidate\Repositories\Repository;
 use App\Common\Services\Storage;
 use App\Interview\Dto\Create;
 use App\Interview\Http\Requests\StoreRequest;
@@ -21,13 +21,13 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 final readonly class Controller extends BaseController
 {
     public function __construct(
-        private ManageService       $manageService,
-        private CrudService         $createService,
-        private Repository          $interviewRepository,
-        private VacancyRepository   $vacancyRepository,
-        private CandidateRepository $candidateRepository,
-        private TokenService        $tokenService,
-        private Storage             $storage,
+        private ManageService     $manageService,
+        private CrudService       $createService,
+        private Repository        $interviewRepository,
+        private VacancyRepository $vacancyRepository,
+        private Repository        $candidateRepository,
+        private TokenService      $tokenService,
+        private Storage           $storage,
     ) {
     }
 

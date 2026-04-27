@@ -6,7 +6,7 @@ namespace App\Skill\Http\Controllers;
 
 use App\Skill\Repositories\Repository;
 use Illuminate\Support\Collection;
-use Request;
+use Illuminate\Http\Request;
 
 final readonly class Controller
 {

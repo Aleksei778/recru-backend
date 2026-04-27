@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interview\Services;
 
 use App\Ai\Gpt\Contracts\AsyncInterface;
-use App\Ai\Gpt\Prompts\Interview\EvalGenerator;
+use App\Ai\Gpt\Prompts\Interview\EvaluationGenerator;
 use App\Ai\Operation\Dto\Create;
 use App\Ai\Operation\Enum\{Status, Type};
 use App\Ai\Operation\Jobs\CheckOperationJob;
@@ -18,10 +18,10 @@ use Psr\Log\LoggerInterface;
 final readonly class EvaluationService
 {
     public function __construct(
-        private EvalGenerator $evaluationGenerator,
-        private AsyncInterface $gptService,
-        private CrudService $operationCrudService,
-        private LoggerInterface $logger,
+        private EvaluationGenerator $evaluationGenerator,
+        private AsyncInterface      $gptService,
+        private CrudService         $operationCrudService,
+        private LoggerInterface     $logger,
     ) {
     }
 

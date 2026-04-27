@@ -4,44 +4,49 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Controllers;
 
-use App\Common\Http\Controllers\Controller as BaseController;
-use App\Candidate\Dto\Candidate\Create;
-use App\Candidate\Dto\Candidate\Update;
-use App\Candidate\Http\Requests\StoreRequest as StoreCandidateRequest;
-use App\Candidate\Http\Requests\UpdateRequest as UpdateCandidateRequest;
-use App\Candidate\Http\Resources\Resource as CandidateResource;
+use App\Candidate\Dto\Candidate\{Create, Update};
+use App\Candidate\Http\Requests\{StoreRequest, UpdateRequest};
+use App\Candidate\Http\Resources\Collection;
+use App\Candidate\Http\Resources\Resource;
 use App\Candidate\Models\Candidate;
-use App\Candidate\Services\CrudService;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Candidate\Services\{Social\CrudService, Social\CrudService, Workplace\CrudService,};
+use App\Common\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 final readonly class Controller extends BaseController
 {
     public function __construct(
-        private CrudService $manageService,
+        private CrudService $crudService,
+        private CrudService $workplaceService,
+        private CrudService $socialService,
     ) {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(): Collection
     {
         $candidates = Candidate::with(['tenant', 'addedBy', 'interviews', 'skills'])
             ->latest()
             ->paginate(15);
 
-        return CandidateResource::collection($candidates);
+        return Collection::make($candidates);
     }
 
-    public function store(StoreCandidateRequest $request): CandidateResource
+    public function store(StoreRequest $request): Resource
     {
+        $validated = $request->validated();
+
         $dto = Create::fromArray([
             ...$request->validated(),
             'added_by_id' => Auth::id(),
         ]);
 
-        $candidate = $this->manageService->create($dto);
+        $candidate = $this->crudService->create($dto);
 
-        return CandidateResource::make(
+        $this->workplaceService->syncWorkPlaces($candidate, $validated['work_places'] ?? []);
+        $this->socialService->syncSocials($candidate, $validated['socials'] ?? []);
+
+        return Resource::make(
             $candidate->load(['tenant', 'addedBy', 'interviews'])
         );
     }
@@ -53,7 +58,7 @@ final readonly class Controller extends BaseController
         );
     }
 
-    public function update(UpdateCandidateRequest $request, Candidate $candidate): CandidateResource
+    public function update(UpdateRequest $request, Candidate $candidate): Resource
     {
         $dto = Update::fromArray($request->validated());
 

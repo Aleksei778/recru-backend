@@ -17,9 +17,6 @@ final class RegisterRequest extends FormRequest
         parent::__construct();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
@@ -32,7 +29,7 @@ final class RegisterRequest extends FormRequest
                 'required',
                 'string',
                 'max:63',
-                'unique:domains,domain',
+                'unique:tenants,subdomain',
             ],
             'email' => [
                 'required',
@@ -53,9 +50,6 @@ final class RegisterRequest extends FormRequest
         ];
     }
 
-    /**
-     * Handle a failed validation attempt.
-     */
     protected function failedValidation(Validator $validator): void
     {
         $this->logger->error('Validation failed for DomainRegisterRequest', [

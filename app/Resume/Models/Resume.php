@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Resume\Models;
 
 use App\Candidate\Models\Candidate;
+use App\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,8 +19,9 @@ final class Resume extends Model
         'size',
         'storage_disk',
         'parsed_data',
-        'summary',
-        'score',
+        'text_grade',
+        'grade',
+        'saved_by_id',
     ];
 
     protected $casts = [
@@ -30,5 +32,25 @@ final class Resume extends Model
     public function candidate(): BelongsTo
     {
         return $this->belongsTo(Candidate::class);
+    }
+
+    public function savedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'saved_by_id');
+    }
+
+    public function setGrades(
+        int $grade,
+        string $textGrade,
+    ): void {
+        $this->update([
+            'grade' => $grade,
+            'text_grade' => $textGrade,
+        ]);
+    }
+
+    public function setCandidateId(int $candidateId): void
+    {
+        $this->update(['candidate_id' => $candidateId]);
     }
 }

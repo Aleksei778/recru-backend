@@ -12,7 +12,6 @@ trait HasSkills
     public function skills(): MorphToMany
     {
         return $this->morphToMany(Skill::class, 'skillable')
-            ->withPivot('level')
             ->withTimestamps();
     }
 }

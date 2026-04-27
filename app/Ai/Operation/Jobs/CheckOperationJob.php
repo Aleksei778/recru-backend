@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Ai\Operation\Jobs;
 
 use App\Ai\Operation\Enum\CheckResult;

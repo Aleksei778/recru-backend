@@ -6,18 +6,23 @@ namespace App\User\Http\Controllers\Auth;
 
 use App\Common\Http\Controllers\Controller;
 use App\User\Http\Requests\Auth\RegisterRequest;
-use App\Tenant\Models\Tenant;
+use App\Tenant\Services\{CrudService as TenantCrudService};
 use App\User\Enum\UserRole;
-use App\User\Models\User;
+use App\User\Services\{
+    CrudService as UserCrudService,
+    TokenService as UserTokenService,
+};
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\{DB, Hash};
 use Psr\Log\LoggerInterface;
 
 final readonly class RegisterController extends Controller
 {
     public function __construct(
         private LoggerInterface $logger,
+        private UserCrudService $userCrudService,
+        private TenantCrudService $tenantCrudService,
+        private UserTokenService $userTokenService,
     ) {
     }
 
@@ -28,27 +33,22 @@ final readonly class RegisterController extends Controller
 
             DB::beginTransaction();
 
-            $company = $validated['company'];
-            $subdomain = $validated['subdomain'];
             $email = $validated['email'];
             $password = $validated['password'];
 
-            $tenant = Tenant::create([
-                'name' => $company,
-            ]);
+            $tenant = $this->tenantCrudService->create(
+                name: $validated['company'],
+                subdomain: $validated['subdomain']
+            );
 
-            $tenant->domains()->create([
-                'domain' => $subdomain,
-            ]);
+            $user = $this->userCrudService->create(
+                tenant: $tenant,
+                email: $email,
+                password: Hash::make($password),
+                role: UserRole::ADMIN,
+            );
 
-            $user = User::create([
-                'tenant_id' => $tenant->id,
-                'email' => $email,
-                'password' => Hash::make($password),
-                'role' => UserRole::ADMIN,
-            ]);
-
-            $token = $user->createToken('recru-hr-token')->plainTextToken;
+            $token = $this->userTokenService->generate($user);
 
             DB::commit();
 
@@ -59,7 +59,7 @@ final readonly class RegisterController extends Controller
 
             return new JsonResponse([
                 'user' => $user,
-                'tenant' => $user->tenant,
+                'tenant' => $tenant,
                 'token' => $token,
             ]);
 

@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Candidate\Services;
 
-use App\Candidate\Repositories\CandidateRepository;
-use App\Candidate\Enum\{EducationLevel, Source, Status};
-use App\Resume\Dto\ParsedResumeDto;
 use App\Candidate\Dto\Candidate\{Create, Update};
+use App\Candidate\Enum\{EducationLevel, Source, Status};
 use App\Candidate\Models\Candidate;
+use App\Candidate\Repositories\Repository;
+use App\Candidate\Services\Workplace\CrudService;
+use App\Resume\Dto\FinalResult;
 
 final readonly class CrudService
 {
     public function __construct(
-        private SocialService $socialService,
-        private WorkplaceService $workplaceService,
-        private CandidateRepository $candidateRepository,
+        private Social\CrudService $socialService,
+        private CrudService        $workplaceService,
+        private Repository         $candidateRepository,
     ) {
     }
 
@@ -42,9 +43,9 @@ final readonly class CrudService
     }
 
     private function findOrCreateCandidateFromParsedResume(
-        ParsedResumeDto $dto,
-        ?int $tenantId,
-        ?int $userId
+        FinalResult $dto,
+        ?int        $tenantId,
+        ?int        $userId
     ): Candidate {
         $candidate = null;
 

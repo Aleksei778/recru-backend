@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Resume\Http\Requests;
 
-use App\Common\Enum\Locale;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
 final class FileRequest extends FormRequest
 {
@@ -20,11 +20,6 @@ final class FileRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:pdf,txt',
-                'max:5120',
-            ],
-            'locale' => [
-                'required',
-                new Enum(Locale::class),
             ],
         ];
     }
