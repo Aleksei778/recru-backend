@@ -32,12 +32,13 @@ Route::prefix('api')->group(function () {
         Route::prefix('resumes')->group(function () {
             Route::post('parse/file', [ResumeController::class, 'parseFile']);
             Route::post('parse/string', [ResumeController::class, 'parseString']);
+            Route::post('save', [ResumeController::class, 'save']);
         });
 
         Route::get('operations/{operation}', [OperationController::class, 'status']);
 
         Route::prefix('emails')->group(function () {
-            Route::get('/', [EmailController::class, 'index']);
+            Route::get('inbox', [EmailController::class, 'index']);
             Route::post('send', [EmailController::class, 'send']);
         });
     });

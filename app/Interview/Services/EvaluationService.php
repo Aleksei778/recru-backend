@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Interview\Services;
 
-use App\Ai\Gpt\Contracts\AsyncInterface;
+use App\Ai\Gpt\Providers\GptInterface;
 use App\Ai\Gpt\Prompts\Interview\EvaluationGenerator;
 use App\Ai\Operation\Dto\Create;
 use App\Ai\Operation\Enum\{Status, Type};
 use App\Ai\Operation\Jobs\CheckOperationJob;
 use App\Ai\Operation\Services\CrudService;
 use App\Common\Enum\Locale;
-use App\Email\Jobs\QuestionsReadyNotifyUserJob;
+use App\Email\Jobs\NotifyUserQuestionsReadyJob;
 use App\Interview\Models\Interview;
 use Psr\Log\LoggerInterface;
 
@@ -19,15 +19,15 @@ final readonly class EvaluationService
 {
     public function __construct(
         private EvaluationGenerator $evaluationGenerator,
-        private AsyncInterface      $gptService,
-        private CrudService         $operationCrudService,
-        private LoggerInterface     $logger,
+        private GptInterface $gptService,
+        private CrudService $operationCrudService,
+        private LoggerInterface $logger,
     ) {
     }
 
     public function evaluate(Interview $interview): bool
     {
-        $externalId = $this->gptService->completionAsync(
+        $externalId = $this->gptService->completion(
             messages: $this->evaluationGenerator->messages($interview)
         );
 
@@ -77,7 +77,7 @@ final readonly class EvaluationService
         $hr = $interview->vacancy->createdBy;
         $locale = Locale::from(config('app.locale', 'ru'));
 
-        QuestionsReadyNotifyUserJob::dispatch($interview, $hr, $locale);
+        NotifyUserQuestionsReadyJob::dispatch($interview, $hr, $locale);
     }
 
     private function markdownClean(string $response): string

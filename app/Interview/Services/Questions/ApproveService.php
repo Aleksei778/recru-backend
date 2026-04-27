@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Interview\Services\Questions;
 
 use App\Common\Enum\Locale;
-use App\Email\Jobs\QuestionsReadyNotifyUserJob;
+use App\Email\Jobs\NotifyUserQuestionsReadyJob;
 use App\Interview\Jobs\SynthesizeQuestionJob;
 use App\Interview\Models\Interview;
 use App\Interview\Repositories\QuestionRepository;
@@ -48,7 +48,7 @@ final readonly class ApproveService
 
         Bus::chain([
             ...$chain,
-            new QuestionsReadyNotifyUserJob(
+            new NotifyUserQuestionsReadyJob(
                 interview: $interview,
                 hr: $user,
                 locale: $locale,

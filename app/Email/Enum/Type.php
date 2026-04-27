@@ -8,8 +8,8 @@ enum Type: string
 {
     case InterviewInvite = 'interview_invite';
     case QuestionsReady = 'questions_ready';
-    case Results = 'results';
     case Reject = 'reject';
+    case Approve = 'approve';
 
     public static function values(): array
     {

@@ -9,11 +9,11 @@ use Carbon\{Carbon, CarbonInterface};
 final readonly class Create
 {
     public function __construct(
-        public int $candidate_id,
-        public string $company_name,
+        public int $candidateId,
+        public string $companyName,
         public string $position,
-        public CarbonInterface $started_at,
-        public ?CarbonInterface $ended_at,
+        public CarbonInterface $startedAt,
+        public ?CarbonInterface $endedAt,
         public ?string $description,
     ) {
     }
@@ -21,11 +21,11 @@ final readonly class Create
     public static function fromArray(array $data): self
     {
         return new self(
-            candidate_id: (int) $data['candidate_id'],
-            company_name: $data['company_name'],
+            candidateId: (int) $data['candidate_id'],
+            companyName: $data['company_name'],
             position: $data['position'],
-            started_at: Carbon::parse($data['started_at'] ?? null),
-            ended_at: Carbon::parse($data['ended_at'] ?? null),
+            startedAt: Carbon::parse($data['started_at'] ?? null),
+            endedAt: Carbon::parse($data['ended_at'] ?? null),
             description: $data['description'] ?? null,
         );
     }
@@ -33,11 +33,11 @@ final readonly class Create
     public function toArray(): array
     {
         return [
-            'candidate_id' => $this->candidate_id,
-            'company_name' => $this->company_name,
+            'candidate_id' => $this->candidateId,
+            'company_name' => $this->companyName,
             'position' => $this->position,
-            'started_at' => $this->started_at,
-            'ended_at' => $this->ended_at,
+            'started_at' => $this->startedAt,
+            'ended_at' => $this->endedAt,
             'description' => $this->description,
         ];
     }

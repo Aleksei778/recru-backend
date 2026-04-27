@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Interview\Http\Controllers;
 
-use App\Candidate\Repositories\Repository;
+use App\Candidate\Repositories\Repository as CandidateRepository;
+use App\Common\Enum\Locale;
 use App\Common\Services\Storage;
 use App\Interview\Dto\Create;
+use App\Interview\Enum\Decision;
+use App\Interview\Http\Requests\CloseRequest;
 use App\Interview\Http\Requests\StoreRequest;
+use App\Interview\Http\Requests\UpdateQuestionsRequest;
 use App\Interview\Http\Resources\Resource;
-use App\Interview\Repositories\Repository;
+use App\Interview\Repositories\InterviewRepository;
+use App\Interview\Services\Questions\ApproveService;
 use App\Vacancy\Repositories\VacancyRepository;
 use Carbon\Carbon;
 use App\Interview\Models\{Interview, Question};
@@ -21,13 +26,14 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 final readonly class Controller extends BaseController
 {
     public function __construct(
-        private ManageService     $manageService,
-        private CrudService       $createService,
-        private Repository        $interviewRepository,
-        private VacancyRepository $vacancyRepository,
-        private Repository        $candidateRepository,
-        private TokenService      $tokenService,
-        private Storage           $storage,
+        private ManageService $manageService,
+        private CrudService $createService,
+        private InterviewRepository $interviewRepository,
+        private VacancyRepository  $vacancyRepository,
+        private CandidateRepository $candidateRepository,
+        private TokenService $tokenService,
+        private Storage $storage,
+        private ApproveService $approveService,
     ) {
     }
 
@@ -55,7 +61,6 @@ final readonly class Controller extends BaseController
         );
 
         $interview = $this->createService->create($dto);
-
 
         return Resource::make($interview);
     }
@@ -123,6 +128,36 @@ final readonly class Controller extends BaseController
         }
 
         $this->manageService->submitAnswer($question, $audio);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function updateQuestions(UpdateQuestionsRequest $request, Interview $interview): JsonResponse
+    {
+        $this->manageService->updateQuestions($request->validated('questions'));
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function approveQuestions(UpdateQuestionsRequest $request, Interview $interview): JsonResponse
+    {
+        $locale = Locale::from(config('app.locale', 'ru'));
+
+        $this->approveService->approve(
+            interview: $interview,
+            questionsNewData: $request->validated('questions'),
+            locale: $locale,
+            user: $request->user(),
+        );
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function close(CloseRequest $request, Interview $interview): JsonResponse
+    {
+        $decision = Decision::from($request->validated('decision'));
+
+        $this->manageService->close($interview, $decision);
 
         return response()->json(['status' => 'ok']);
     }

@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Resume\Services;
 
+use App\Resume\Models\Resume;
 use App\Candidate\Dto\Candidate\{Update};
 use App\Candidate\Enum\EducationLevel;
 use App\Candidate\Repositories\{Repository as CandidateRepository};
-use App\Candidate\Services\{App\Candidate\Services\Social\CrudService,
-    App\Candidate\Services\Social\CrudService as CandidateCrudService,
-    App\Candidate\Services\Workplace\WorkplaceService};
+use App\Candidate\Services\{CrudService as CandidateCrudService};
+use App\Candidate\Services\Social\{SyncService as SocialSyncService};
+use App\Candidate\Services\Workplace\{SyncService as WorkplaceSyncService};
 use Illuminate\Support\Facades\DB;
 
 final readonly class AttachToCandidateService
 {
     public function __construct(
-        private CandidateRepository                           $candidateRepository,
-        private CandidateCrudService                          $candidateCrudService,
-        private \App\Candidate\Services\Social\CrudService    $socialService,
-        private \App\Candidate\Services\Workplace\CrudService $workplaceService,
+        private CandidateRepository $candidateRepository,
+        private CandidateCrudService $candidateService,
+        private SocialSyncService $socialService,
+        private WorkplaceSyncService $workplaceService,
     ) {
     }
 
@@ -48,7 +49,7 @@ final readonly class AttachToCandidateService
                     : $candidate->education_level,
             );
 
-            $this->candidateCrudService->update($candidate, $updateCandidateDto);
+            $this->candidateService->update($candidate, $updateCandidateDto);
 
             $this->socialService->syncSocials($candidate, $data);
             $this->workplaceService->syncWorkplaces($candidate, $data);

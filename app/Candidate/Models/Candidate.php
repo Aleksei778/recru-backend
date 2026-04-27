@@ -32,6 +32,7 @@ final class Candidate extends Model
         'experience_years',
         'education_level',
         'added_by_id',
+        'locale',
     ];
 
     protected $casts = [

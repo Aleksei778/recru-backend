@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('emails.interview_finished.subject', ['firstName' => $candidate->first_name, 'lastName' => $candidate->last_name, 'vacancy' => $vacancy->title]) }}</title>
+    <title>{{ __('emails.candidate_approved.subject', ['vacancy' => $vacancy->title]) }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -70,21 +70,15 @@
             margin-bottom: 24px;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-
-        .info-block {
+        .vacancy-block {
             background: #f8f8f7;
             border: 1px solid #e8e8e6;
             border-radius: 14px;
-            padding: 16px 20px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
         }
 
-        .info-label {
+        .vacancy-label {
             font-size: 11px;
             font-weight: 600;
             letter-spacing: 0.1em;
@@ -93,34 +87,39 @@
             margin-bottom: 6px;
         }
 
-        .info-value {
-            font-size: 15px;
+        .vacancy-title {
+            font-size: 18px;
             font-weight: 700;
             color: #000;
+            margin-bottom: 4px;
         }
 
-        .info-sub {
-            font-size: 12px;
+        .vacancy-company {
+            font-size: 13px;
             color: #666;
-            margin-top: 2px;
         }
 
         .status-block {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             background: #000;
             border-radius: 14px;
             padding: 20px 24px;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
+        .status-icon {
+            width: 32px;
+            height: 32px;
             background: #fff;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
-            opacity: 0.5;
+            font-size: 16px;
+            line-height: 1;
+            text-align: center;
         }
 
         .status-text {
@@ -180,39 +179,30 @@
     <div class="card">
 
         <div class="card-header">
-            <p class="greeting">{{ __('emails.interview_finished.greeting') }}</p>
-            <h1 class="headline">{!! __('emails.interview_finished.headline') !!}</h1>
+            <p class="greeting">{{ __('emails.candidate_approved.greeting') }}</p>
+            <h1 class="headline">{!! __('emails.candidate_approved.headline') !!}</h1>
         </div>
 
         <div class="card-body">
 
             <p class="text">
-                {!! __('emails.interview_finished.intro', [
-                    'hrName'    => $hr->name,
+                {!! __('emails.candidate_approved.intro', [
                     'firstName' => $candidate->first_name,
                     'lastName'  => $candidate->last_name,
-                    'vacancy'   => $vacancy->title,
                 ]) !!}
             </p>
 
-            <div class="info-grid">
-                <div class="info-block">
-                    <p class="info-label">{{ __('emails.interview_finished.candidate_label') }}</p>
-                    <p class="info-value">{{ $candidate->first_name }} {{ $candidate->last_name }}</p>
-                    <p class="info-sub">{{ $candidate->email }}</p>
-                </div>
-                <div class="info-block">
-                    <p class="info-label">{{ __('emails.interview_finished.vacancy_label') }}</p>
-                    <p class="info-value">{{ $vacancy->title }}</p>
-                    <p class="info-sub">{{ $interview->created_at->format('d.m.Y') }}</p>
-                </div>
+            <div class="vacancy-block">
+                <p class="vacancy-label">{{ __('emails.candidate_approved.vacancy_label') }}</p>
+                <p class="vacancy-title">{{ $vacancy->title }}</p>
+                <p class="vacancy-company">{{ $interview->candidate->tenant->name ?? '' }}</p>
             </div>
 
             <div class="status-block">
-                <div class="status-dot"></div>
+                <div class="status-icon">&#10003;</div>
                 <div>
-                    <div class="status-text">Обработка ответов</div>
-                    <div class="status-sub">{{ $candidate->first_name }} {{ $candidate->last_name }} · {{ $vacancy->title }}</div>
+                    <div class="status-text">{{ $vacancy->title }}</div>
+                    <div class="status-sub">{{ $candidate->first_name }} {{ $candidate->last_name }}</div>
                 </div>
             </div>
 
@@ -220,13 +210,13 @@
 
         <div class="card-footer">
             <span class="footer-brand">RECRU</span>
-            <span class="footer-note">{{ __('emails.interview_finished.footer_note') }}</span>
+            <span class="footer-note">{{ __('emails.candidate_approved.footer_note') }}</span>
         </div>
 
     </div>
 
     <div class="below">
-        <a href="#">{{ __('emails.interview_finished.privacy') }}</a> · <a href="#">{{ __('emails.interview_finished.unsubscribe') }}</a>
+        <a href="#">{{ __('emails.candidate_approved.privacy') }}</a> · <a href="#">{{ __('emails.candidate_approved.unsubscribe') }}</a>
     </div>
 
 </div>

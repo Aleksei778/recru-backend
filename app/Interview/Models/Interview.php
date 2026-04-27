@@ -46,7 +46,7 @@ final class Interview extends Model
 
     public function isPending(): bool
     {
-        return $this->status === Status::PENDING;
+        return $this->status === Status::Pending;
     }
 
     public function isQuestionsReview(): bool
@@ -94,5 +94,10 @@ final class Interview extends Model
     public function markAsEvaluated(): void
     {
         $this->update(['status' => Status::Evaluated]);
+    }
+
+    public function markAsClosed(): void
+    {
+        $this->update(['status' => Status::Closed]);
     }
 }

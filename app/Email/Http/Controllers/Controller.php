@@ -9,15 +9,15 @@ use App\Common\Http\Controllers\Controller as BaseController;
 use App\Email\Http\Requests\SendRequest;
 use App\Interview\Services\TokenService;
 use App\Email\Services\{SendService, CrudService};
-use App\Interview\Repositories\Repository;
+use App\Interview\Repositories\InterviewRepository;
 use Illuminate\Http\JsonResponse;
 
 final readonly class Controller extends BaseController
 {
     public function __construct(
-        public Repository   $interviewRepository,
-        public CrudService  $createService,
-        public SendService  $sendService,
+        public InterviewRepository $interviewRepository,
+        public CrudService $createService,
+        public SendService $sendService,
         public TokenService $tokenService,
     ) {
     }
@@ -55,4 +55,6 @@ final readonly class Controller extends BaseController
 
         return response()->json(['message' => 'Email sent successfully']);
     }
+
+    public
 }

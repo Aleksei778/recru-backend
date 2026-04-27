@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Models;
 
+use App\Common\Enum\Locale;
 use App\Tenant\Models\Tenant;
 use App\Tenant\Traits\BelongsToTenant;
 use App\User\Enum\UserRole;
@@ -25,8 +26,7 @@ final class User extends Authenticatable
         'password',
         'role',
         'tenant_id',
-        'avatar',
-        'settings',
+        'locale',
     ];
 
     protected $hidden = [
@@ -40,6 +40,7 @@ final class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'locale' => Locale::class
         ];
     }
 

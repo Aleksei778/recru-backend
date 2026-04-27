@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Candidate\Services\Social;
+namespace App\Candidate\Services\Workplace;
 
-use App\Candidate\Dto\Social\Create;
+use App\Candidate\Dto\Workplace\Create;
 use App\Candidate\Models\Candidate;
 
 final readonly class SyncService
 {
-    private function __construct(
+    public function __construct(
         private CrudService $crudService,
     ) {
     }
 
-    public function syncSocials(Candidate $candidate, array $socials): void
+    public function syncWorkPlaces(Candidate $candidate, array $workPlaces): void
     {
-        foreach ($socials as $socialData) {
+        foreach ($workPlaces as $wpData) {
             $wpData['candidate_id'] = $candidate->id;
             $dto = Create::fromArray($wpData);
 

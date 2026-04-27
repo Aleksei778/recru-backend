@@ -2,12 +2,12 @@
 
 return [
     'interview_invitation' => [
-        'subject' => 'Invitation to InterviewInvitationMail: :vacancy',
+        'subject' => 'Invitation to interview: :vacancy',
         'greeting' => 'Invitation',
         'headline' => 'You are invited<br>to an interview',
         'intro' => 'Hello, <strong style="color:#000">:firstName :lastName</strong>!<br><br>We are pleased to inform you that you are invited to an initial technical interview. It is conducted as a dialogue with an AI assistant and will take about 15–20 minutes. Answer in detail and honestly — this will help the recruiter objectively assess your competencies.',
         'vacancy_label' => 'Vacancy',
-        'button' => 'Start InterviewInvitationMail',
+        'button' => 'Start interview',
         'expiry' => 'The link is valid until :expiresAt. After the expiration date, contact the recruiter for a new link.',
         'footer_note' => 'Automatic email — do not reply to it',
         'privacy' => 'Privacy Policy',
@@ -16,5 +16,36 @@ return [
     ],
     'questions_ready' => [
 
+    ],
+    'interview_finished' => [
+        'subject'         => ':firstName :lastName has completed the interview — :vacancy',
+        'greeting'        => 'Interview completed',
+        'headline'        => 'Candidate has finished<br>the interview',
+        'intro'           => 'Hello, <strong style="color:#000">:hrName</strong>!<br><br>Candidate <strong style="color:#000">:firstName :lastName</strong> has completed the interview for <strong style="color:#000">:vacancy</strong>. Answers are being processed — evaluation results will be available shortly.',
+        'candidate_label' => 'Candidate',
+        'vacancy_label'   => 'Vacancy',
+        'footer_note'     => 'Automatic email — do not reply to it',
+        'privacy'         => 'Privacy Policy',
+        'unsubscribe'     => 'Unsubscribe',
+    ],
+    'candidate_approved' => [
+        'subject'       => 'Congratulations! Interview results for :vacancy',
+        'greeting'      => 'Good news',
+        'headline'      => 'You have passed<br>the interview',
+        'intro'         => 'Hello, <strong style="color:#000">:firstName :lastName</strong>!<br><br>We are pleased to inform you that you have successfully passed the initial interview. Our recruiter will contact you shortly to discuss next steps.',
+        'vacancy_label' => 'Vacancy',
+        'footer_note'   => 'Automatic email — do not reply to it',
+        'privacy'       => 'Privacy Policy',
+        'unsubscribe'   => 'Unsubscribe',
+    ],
+    'candidate_rejected' => [
+        'subject'       => 'Interview results for :vacancy',
+        'greeting'      => 'Interview results',
+        'headline'      => 'Thank you for<br>your time',
+        'intro'         => 'Hello, <strong style="color:#000">:firstName :lastName</strong>!<br><br>Thank you for taking the time to complete our interview. Unfortunately, at this stage your profile does not match our requirements for this vacancy. We wish you all the best in your job search.',
+        'vacancy_label' => 'Vacancy',
+        'footer_note'   => 'Automatic email — do not reply to it',
+        'privacy'       => 'Privacy Policy',
+        'unsubscribe'   => 'Unsubscribe',
     ],
 ];

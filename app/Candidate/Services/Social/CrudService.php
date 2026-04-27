@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace App\Candidate\Services\Social;
 
-use App\Candidate\Models\{Candidate, Social};
+use App\Candidate\Models\Social;
+use App\Candidate\Dto\Social\Create;
 
 final readonly class CrudService
 {
-    public function syncSocials(Candidate $candidate, array $socials): void
+    public function create(Create $dto): void
     {
-        foreach ($socials as $socialData) {
-            Social::updateOrCreate(
-                ['candidate_id' => $candidate->id, 'name' => $socialData['name']],
-                ['url' => $socialData['url']]
-            );
-        }
+        Social::create($dto->toArray());
     }
 }

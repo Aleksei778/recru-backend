@@ -13,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
 
-final class QuestionsReadyNotifyUserJob implements ShouldQueue
+final class NotifyUserInterviewFinishedJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -28,12 +28,8 @@ final class QuestionsReadyNotifyUserJob implements ShouldQueue
 
     public function handle(SendService $sendService): void
     {
-        $mailable = $sendService->getQuestionsReadyMail(
-            interview: $this->interview,
-            user: $this->hr,
-            locale: $this->locale,
-        );
+        $mailable = $sendService->getInterviewFinishedMail($this->interview, $this->hr, $this->locale);
 
-        $sendService->sendQuestionsReadyMail($mailable);
+        $sendService->sendInterviewFinishedMail($mailable);
     }
 }
