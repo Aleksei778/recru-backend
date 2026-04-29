@@ -11,7 +11,7 @@ use App\Vacancy\Models\Vacancy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-class InterviewFactory extends Factory
+final class InterviewFactory extends Factory
 {
     protected $model = Interview::class;
 

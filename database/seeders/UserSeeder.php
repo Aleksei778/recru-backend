@@ -16,7 +16,6 @@ final class UserSeeder extends Seeder
 
         foreach ($tenants as $tenant) {
             User::factory()->admin()->forTenant($tenant)->create([
-                'name' => 'Admin ' . $tenant->name,
                 'email' => 'admin@' . $tenant->subdomain . '.test',
             ]);
 

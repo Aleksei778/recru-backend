@@ -11,7 +11,7 @@ use App\Tenant\Models\Tenant;
 use App\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CandidateFactory extends Factory
+final class CandidateFactory extends Factory
 {
     protected $model = Candidate::class;
 

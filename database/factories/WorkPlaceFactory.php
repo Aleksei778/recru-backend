@@ -7,7 +7,7 @@ namespace Database\Factories;
 use App\Candidate\Models\{Candidate, WorkPlace};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class WorkPlaceFactory extends Factory
+final class WorkPlaceFactory extends Factory
 {
     protected $model = WorkPlace::class;
 

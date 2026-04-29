@@ -9,7 +9,7 @@ use App\VoiceLog\Enum\Type;
 use App\VoiceLog\Models\VoiceLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class VoiceLogFactory extends Factory
+final class VoiceLogFactory extends Factory
 {
     protected $model = VoiceLog::class;
 

@@ -12,7 +12,7 @@ use App\Interview\Models\Interview;
 use App\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class EmailFactory extends Factory
+final class EmailFactory extends Factory
 {
     protected $model = Email::class;
 

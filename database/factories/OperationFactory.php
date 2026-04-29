@@ -10,7 +10,7 @@ use App\Interview\Models\Interview;
 use App\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OperationFactory extends Factory
+final class OperationFactory extends Factory
 {
     protected $model = Operation::class;
 
