@@ -7,15 +7,23 @@ namespace App\Vacancy\Models;
 use App\Interview\Models\Interview;
 use App\Skill\Traits\HasSkills;
 use App\Tenant\Models\Tenant;
+use Database\Factories\VacancyFactory;
 use App\Vacancy\Enum\{EmploymentType, Status, WorkMode};
 use App\User\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Vacancy extends Model
 {
-    use HasSkills;
+    /** @use HasFactory<VacancyFactory> */
+    use HasFactory, HasSkills;
+
+    protected static function newFactory(): VacancyFactory
+    {
+        return VacancyFactory::new();
+    }
 
     protected $table = 'vacancies';
 

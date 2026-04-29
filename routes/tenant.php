@@ -38,7 +38,9 @@ Route::prefix('api')->group(function () {
         Route::get('operations/{operation}', [OperationController::class, 'status']);
 
         Route::prefix('emails')->group(function () {
-            Route::get('inbox', [EmailController::class, 'index']);
+            Route::get('inbox', [EmailController::class, 'indexInbox']);
+            Route::get('sent', [EmailController::class, 'indexSent']);
+            Route::get('{email}', [EmailController::class, 'show']);
             Route::post('send', [EmailController::class, 'send']);
         });
     });

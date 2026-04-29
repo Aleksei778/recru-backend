@@ -9,7 +9,7 @@ use App\Candidate\Models\Candidate;
 
 final readonly class SyncService
 {
-    private function __construct(
+    public function __construct(
         private CrudService $crudService,
     ) {
     }
@@ -17,8 +17,8 @@ final readonly class SyncService
     public function syncSocials(Candidate $candidate, array $socials): void
     {
         foreach ($socials as $socialData) {
-            $wpData['candidate_id'] = $candidate->id;
-            $dto = Create::fromArray($wpData);
+            $socialData['candidate_id'] = $candidate->id;
+            $dto = Create::fromArray($socialData);
 
             $this->crudService->create($dto);
         }

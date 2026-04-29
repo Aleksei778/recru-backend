@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Ai\Yandex\Enum\OperationType;
+use App\Ai\Operation\Enum\Type;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->dropForeign('operations_resume_id_foreign');
             $table->dropColumn('resume_id');
             $table->morphs('operational');
-            $table->enum('type', OperationType::values());
+            $table->enum('type', Type::values());
         });
     }
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('candidate_id')->constrained()->cascadeOnDelete();
             $table->foreignId('vacancy_id')->constrained()->cascadeOnDelete();
-            $table->enum('status', Status::values())->default(Status::PENDING);
+            $table->enum('status', Status::values())->default(Status::Pending);
             $table->string('token')->unique()->nullable();
             $table->timestamp('token_expires_at')->nullable();
             $table->unsignedTinyInteger('grade')->nullable();

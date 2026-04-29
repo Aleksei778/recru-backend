@@ -11,6 +11,8 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::dropIfExists('operations');
+
         Schema::create('operations', static function (Blueprint $table) {
             $table->id();
             $table->morphs('subject');

@@ -7,6 +7,10 @@ namespace App\Email\Http\Controllers;
 use App\Common\Enum\Locale;
 use App\Common\Http\Controllers\Controller as BaseController;
 use App\Email\Http\Requests\SendRequest;
+use App\Email\Http\Resources\Collection;
+use App\Email\Http\Resources\Resource;
+use App\Email\Models\Email;
+use App\Email\Repositories\Repository as EmailRepository;
 use App\Interview\Services\TokenService;
 use App\Email\Services\{SendService, CrudService};
 use App\Interview\Repositories\InterviewRepository;
@@ -19,7 +23,27 @@ final readonly class Controller extends BaseController
         public CrudService $createService,
         public SendService $sendService,
         public TokenService $tokenService,
+        public EmailRepository $emailRepository,
     ) {
+    }
+
+    public function indexInbox(): Collection
+    {
+        return Collection::make(
+            $this->emailRepository->findInboxWithPaginate()
+        );
+    }
+
+    public function show(Email $email): Resource
+    {
+        return Resource::make($email);
+    }
+
+    public function indexSent(): Collection
+    {
+        return Collection::make(
+            $this->emailRepository->findSentWithPaginate()
+        );
     }
 
     public function send(SendRequest $request): JsonResponse
@@ -55,6 +79,4 @@ final readonly class Controller extends BaseController
 
         return response()->json(['message' => 'Email sent successfully']);
     }
-
-    public
 }

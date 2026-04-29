@@ -7,12 +7,17 @@ namespace App\Interview\Models;
 use App\Candidate\Models\Candidate;
 use App\Interview\Enum\Status;
 use App\Vacancy\Models\Vacancy;
+use Database\Factories\InterviewFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Interview extends Model
 {
+    /** @use HasFactory<InterviewFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'candidate_id',
         'vacancy_id',

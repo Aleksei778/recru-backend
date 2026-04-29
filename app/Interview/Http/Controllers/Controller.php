@@ -161,4 +161,16 @@ final readonly class Controller extends BaseController
 
         return response()->json(['status' => 'ok']);
     }
+
+    public function regenerateToken(Interview $interview): JsonResponse
+    {
+        $token = $this->tokenService->generateToken();
+
+        $interview->update([
+            'token' => $token,
+        ]);
+
+        return response()->json(['token' => $token]);
+    }
+
 }

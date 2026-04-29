@@ -20,6 +20,11 @@ final class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, BelongsToTenant;
 
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'email',

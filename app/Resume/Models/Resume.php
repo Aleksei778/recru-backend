@@ -6,11 +6,17 @@ namespace App\Resume\Models;
 
 use App\Candidate\Models\Candidate;
 use App\User\Models\User;
+use Database\Factories\QuestionFactory;
+use Database\Factories\ResumeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class Resume extends Model
 {
+    /** @use HasFactory<ResumeFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'candidate_id',
         'file_path',

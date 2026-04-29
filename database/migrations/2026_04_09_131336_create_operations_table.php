@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Ai\Yandex\Enum\{OperationType, OperationStatus};
+use App\Ai\Operation\Enum\{Type, Status};
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,8 +16,8 @@ return new class extends Migration {
                 ->constrained()
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->enum('type', OperationType::values());
-            $table->enum('status', OperationStatus::values())->default(OperationStatus::PENDING);
+            $table->enum('type', Type::values());
+            $table->enum('status', Status::values())->default(OperationStatus::PENDING);
             $table->string('yandex_id')->nullable()->index();
             $table->json('raw_response')->nullable();
             $table->json('raw_request')->nullable();

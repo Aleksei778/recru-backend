@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Ai\Operation\Models;
 
 use App\Tenant\Traits\BelongsToTenant;
+use Database\Factories\OperationFactory;
 use App\Ai\Operation\Enum\{Status, Type};
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 final class Operation extends Model
 {
-    use BelongsToTenant;
+    /** @use HasFactory<OperationFactory> */
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'subject_id',

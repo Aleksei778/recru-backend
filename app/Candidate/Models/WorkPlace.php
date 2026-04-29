@@ -4,11 +4,21 @@ declare(strict_types=1);
 
 namespace App\Candidate\Models;
 
+use Database\Factories\WorkPlaceFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class WorkPlace extends Model
 {
+    /** @use HasFactory<WorkPlaceFactory> */
+    use HasFactory;
+
+    protected static function newFactory(): WorkPlaceFactory
+    {
+        return WorkPlaceFactory::new();
+    }
+
     protected $table = 'work_places';
 
     protected $fillable = [

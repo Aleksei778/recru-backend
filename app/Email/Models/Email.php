@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace App\Email\Models;
 
 use App\Common\Enum\Locale;
+use Database\Factories\EmailFactory;
 use App\Email\Enum\{Status, Type};
 use App\User\Models\User;
 use App\Interview\Models\Interview;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 final class Email extends Model
 {
+    /** @use HasFactory<EmailFactory> */
+    use HasFactory;
+
     protected $table = 'emails';
 
     protected $fillable = [

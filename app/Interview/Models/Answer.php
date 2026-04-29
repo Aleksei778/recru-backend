@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Interview\Models;
 
 use App\VoiceLog\Models\VoiceLog;
+use Database\Factories\AnswerFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class Answer extends Model
+final class Answer extends Model
 {
+    /** @use HasFactory<AnswerFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'question_id',
         'text',

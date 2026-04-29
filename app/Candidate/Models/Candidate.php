@@ -7,15 +7,23 @@ namespace App\Candidate\Models;
 use App\Interview\Models\Interview;
 use App\Resume\Models\Resume;
 use App\Skill\Traits\HasSkills;
+use Database\Factories\CandidateFactory;
 use App\Candidate\Enum\{EducationLevel, Source, Status, Grade};
 use App\Tenant\Models\Tenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\User\Models\User;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 
 final class Candidate extends Model
 {
-    use HasSkills;
+    /** @use HasFactory<CandidateFactory> */
+    use HasFactory, HasSkills;
+
+    protected static function newFactory(): CandidateFactory
+    {
+        return CandidateFactory::new();
+    }
 
     protected $table = 'candidates';
 
