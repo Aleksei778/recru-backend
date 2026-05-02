@@ -8,8 +8,7 @@ final readonly class JsonDecoder
 {
     public function decodeJson(string $text): mixed
     {
-        $text = trim($text);
-        $this->markdownClean($text);
+        $text = $this->markdownClean(trim($text));
 
         try {
             return json_decode($text, true, 512, JSON_THROW_ON_ERROR);
@@ -18,10 +17,18 @@ final readonly class JsonDecoder
         }
     }
 
-    private function markdownClean(string &$text): void
+    private function markdownClean(string $text): string
     {
-        if (preg_match('/^```json\s+(.*?)\s+```$/s', $text, $matches)) {
-            $text = $matches[1];
+        if (preg_match('/^```(?:json)?\s*(.*?)\s*```$/s', $text, $matches)) {
+            return trim($matches[1]);
         }
+
+        $start = strpos($text, '{');
+        $end = strrpos($text, '}');
+        if ($start !== false && $end !== false && $end > $start) {
+            return substr($text, $start, $end - $start + 1);
+        }
+
+        return $text;
     }
 }

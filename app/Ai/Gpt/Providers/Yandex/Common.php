@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 
 readonly class Common
 {
-    private string $folderId;
+    private string  $folderId;
     private string $apiKey;
 
     public function __construct(

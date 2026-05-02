@@ -20,4 +20,9 @@ final readonly class Storage
     {
         return StorageFacade::disk($disk)->url($path);
     }
+
+    public function get(string $disk, string $path): ?string
+    {
+        return StorageFacade::disk($disk)->get($path);
+    }
 }

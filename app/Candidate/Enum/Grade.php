@@ -13,12 +13,7 @@ enum Grade: string
 
     public static function values(): array
     {
-        return [
-            self::JUNIOR->value,
-            self::MIDDLE->value,
-            self::SENIOR->value,
-            self::LEAD->value,
-        ];
+        return array_column(self::cases(), 'value');
     }
 
     public static function defineByYears(float $years): self

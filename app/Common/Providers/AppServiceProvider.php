@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App\Common\Providers;
 
-use App\Ai\Gpt\Providers\GptInterface as GptSyncInterface;
-use App\Ai\Gpt\Contracts\{AsyncInterface as GptAsyncInterface};
-use App\Ai\Gpt\Providers\Yandex as YandexGpt;
-use App\Ai\Operation\Providers\OperationInterface as OperationAsyncInterface;
-use App\Ai\Operation\Providers\Yandex as YandexOperation;
-use App\Ai\Stt\Contracts\{AsyncInterface as SttAsyncInterface};
-use App\Ai\Stt\Providers\SttInterface as SttSyncInterface;
-use App\Ai\Stt\Providers\Yandex\Async as YandexStt;
-use App\Ai\Tts\Providers\{TtsInterface as TtsSyncInterface};
-use App\Ai\Tts\Providers\Yandex\Tts as YandexTts;
+use App\Ai\Gpt\Providers\{
+    GptInterface,
+    Yandex\Async as YandexGptAsync
+};
+use App\Ai\Operation\Providers\{
+    OperationInterface,
+    Yandex\Async as YandexOperationAsync
+};
+use App\Ai\Stt\Providers\{
+    SttInterface,
+    Yandex\Async as YandexSttAsync
+};
+use App\Ai\Tts\Providers\{
+    TtsInterface,
+    Yandex\Tts as YandexTts
+};
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Smalot\PdfParser\Parser as PdfParser;
@@ -47,11 +53,9 @@ class AppServiceProvider extends ServiceProvider
 
     private function bindYandex(): void
     {
-        $this->app->bind(GptAsyncInterface::class, YandexGpt::class);
-        $this->app->bind(GptSyncInterface::class, YandexGpt::class);
-        $this->app->bind(SttAsyncInterface::class, YandexStt::class);
-        $this->app->bind(SttSyncInterface::class, YandexStt::class);
-        $this->app->bind(OperationAsyncInterface::class, YandexOperation::class);
-        $this->app->bind(TtsSyncInterface::class, YandexTts::class);
+        $this->app->bind(GptInterface::class, YandexGptAsync::class);
+        $this->app->bind(SttInterface::class, YandexSttAsync::class);
+        $this->app->bind(TtsInterface::class, YandexTts::class);
+        $this->app->bind(OperationInterface::class, YandexOperationAsync::class);
     }
 }

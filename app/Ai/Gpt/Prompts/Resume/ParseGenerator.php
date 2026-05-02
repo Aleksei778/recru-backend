@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Gpt\Prompts\Resume;
 
-use App\Ai\Contracts\Dto\GptMessage;
+use App\Ai\Gpt\Dto\{Message as GptMessage};
 
 final readonly class ParseGenerator
 {
@@ -20,7 +20,7 @@ final readonly class ParseGenerator
             - phone (строка или null)
             - socials (массив объектов: [{"name": "linkedin", "url": "..."}, {"name": "github", "url": "..."}] или [])
             - experience_years (целое число или null)
-            - work_places (массив объектов: [{"company_name": "...", "position": "...", "description": "...", "started_at": "YYYY-MM-DD", "ended_at": "YYYY-MM-DD" или null}] или [])
+            - workplaces (массив объектов: [{"company_name": "...", "position": "...", "description": "...", "started_at": "YYYY-MM-DD", "ended_at": "YYYY-MM-DD" или null}] или [])
             - education_level (строка или null)
             - skills (массив строк)
             - summary (краткое резюме, строка или null)
@@ -34,8 +34,14 @@ final readonly class ParseGenerator
         $prompt = $this->generate();
 
         return [
-            GptMessage::system($prompt),
-            GptMessage::user("Текст резюме:\n\n" . $text),
+            new GptMessage(
+                role: 'system',
+                text: $prompt
+            ),
+            new GptMessage(
+                role: 'user',
+                text: "Текст резюме:\n\n" . $text
+            ),
         ];
     }
 }

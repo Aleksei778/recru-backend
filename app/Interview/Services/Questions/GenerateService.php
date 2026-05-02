@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Interview\Services\Questions;
 
-use App\Ai\Gpt\Contracts\AsyncInterface as GptAsyncInterface;
+use App\Ai\Gpt\Providers\GptInterface;
 use App\Ai\Gpt\Prompts\Interview\QuestionsGenerator;
 use App\Ai\Operation\Dto\Create;
 use App\Ai\Operation\Enum\Type;
@@ -18,7 +18,7 @@ final readonly class GenerateService
 {
     public function __construct(
         private QuestionsGenerator $questionsGenerator,
-        private GptAsyncInterface $gptService,
+        private GptInterface $gptService,
         private CrudService $crudService,
         private LoggerInterface $logger,
         private OperationCrudService $operationCrudService,
@@ -29,7 +29,7 @@ final readonly class GenerateService
     {
         $messages = $this->questionsGenerator->messages($interview);
 
-        $providerId = $this->gptService->completionAsync($messages);
+        $providerId = $this->gptService->completion($messages);
 
         if (!$providerId) {
             $this->logger->error('Failed to submit question generation', [
@@ -38,6 +38,8 @@ final readonly class GenerateService
 
             return false;
         }
+
+        $interview->markAsGeneratingQuestions();
 
         $operationDto = new Create(
             type: Type::InterviewQuestionsGenerationGpt,
@@ -58,6 +60,8 @@ final readonly class GenerateService
         $questions = $this->getQuestionsFromResponse($response);
 
         $this->saveQuestions($interview, $questions);
+
+        $interview->markAsQuestionsReview();
     }
 
     private function getQuestionsFromResponse(string $response): array

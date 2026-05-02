@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Gpt\Prompts\Interview;
 
-use App\Ai\Contracts\Dto\GptMessage;
+use App\Ai\Gpt\Dto\{Message as GptMessage};
 use App\Interview\Models\Interview;
 
 final readonly class QuestionsGenerator
@@ -14,10 +14,21 @@ final readonly class QuestionsGenerator
         $vacancy = $interview->vacancy;
         $candidate = $interview->candidate;
 
-        return "Ты — профессиональный IT-рекрутер. Твоя задача — составить 10 вопросов для первичного интервью кандидата на вакансию: '{$vacancy->title}'.
-            Описание вакансии: $vacancy->description.
-            Вопросы должны проверять как hard skills, так и soft skills. 
-            Выдай только список вопросов, каждый вопрос с новой строки, без номеров и лишнего текста.";
+        $language = strtolower($candidate->locale->value) === 'ru'
+            ? 'Русский'
+            : 'Английский';
+
+        $vacancySkillsStr = implode(', ', $vacancy->skills);
+        $candidateSkillsStr = implode(', ', $candidate->skills);
+
+        return "Ты — профессиональный IT-рекрутер. Твоя задача — составить {$interview->questions_number} вопросов для первичного интервью кандидата на вакансию: '{$vacancy->title}'.
+            Описание вакансии: $vacancy->description. Скиллы, требуемые под вакансию: $vacancySkillsStr
+            Скиллы кандидата: $candidateSkillsStr
+            Интервью составляется строго индивидуально под вакансию и кандидата, чтобы раскрыть его наилучшим образом
+            Вопросы должны проверять как hard skills, так и soft skills (но первое - в большей мере).
+            Выдай только список вопросов, каждый вопрос с новой строки, без номеров и лишнего текста.
+            Язык вопросов: $language
+           ";
     }
 
     public function messages(Interview $interview): array
@@ -25,8 +36,14 @@ final readonly class QuestionsGenerator
         $prompt = $this->generate($interview);
 
         return [
-            GptMessage::system('Ты помощник рекрутера, который составляет вопросы для интервью.'),
-            GptMessage::user($prompt),
+            new GptMessage(
+                role: 'system',
+                text: 'Ты помощник рекрутера, который составляет вопросы для интервью.'
+            ),
+            new GptMessage(
+                role: 'user',
+                text: $prompt
+            ),
         ];
     }
 }

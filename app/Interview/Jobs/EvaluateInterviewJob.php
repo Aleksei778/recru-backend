@@ -11,12 +11,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
 
-final readonly class EvaluateInterviewJob implements ShouldQueue
+final class EvaluateInterviewJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private Interview $interview
+        private readonly Interview $interview
     ) {
     }
 

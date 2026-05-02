@@ -8,11 +8,7 @@ final readonly class Create
 {
     public function __construct(
         public string $filePath,
-        public string $fileName,
-        public string $mimeType,
-        public int $size,
-        public string $storageDisk,
-        public int $savedById,
+        public string $mimetype,
     ) {
     }
 
@@ -20,11 +16,7 @@ final readonly class Create
     {
         return [
             'file_path' => $this->filePath,
-            'file_name' => $this->fileName,
-            'mime_type' => $this->mimeType,
-            'size' => $this->size,
-            'storage_disk' => $this->storageDisk,
-            'saved_by_id' => $this->savedById,
+            'mimetype' => $this->mimetype,
         ];
     }
 }

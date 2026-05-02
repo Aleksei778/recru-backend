@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resume\Services;
 
-use App\Ai\Gpt\Contracts\AsyncInterface as GptInterface;
+use App\Ai\Gpt\Providers\GptInterface;
 use App\Ai\Gpt\Prompts\Resume\EvaluationGenerator;
 use App\Ai\Operation\Dto\Create as OperationCreateDto;
 use App\Ai\Operation\Enum\Status;
@@ -17,17 +17,17 @@ use App\Ai\Operation\Services\CrudService as OperationCrudService;
 final readonly class EvaluationService
 {
     public function __construct(
-        private GptInterface         $gptService,
-        private EvaluationGenerator  $evalGenerator,
-        private JsonDecoder          $jsonDecoder,
-        private CrudService          $crudService,
+        private GptInterface $gptService,
+        private EvaluationGenerator $evalGenerator,
+        private JsonDecoder $jsonDecoder,
+        private CrudService $crudService,
         private OperationCrudService $operationCrudService,
     ) {
     }
 
-    public function evaluate(string $text, Resume $resume): string
+    public function evaluate(string $text, Resume $resume): int
     {
-        $providerId = $this->gptService->completionAsync(
+        $providerId = $this->gptService->completion(
             messages: $this->evalGenerator->messages($text)
         );
 

@@ -12,7 +12,6 @@ final class SendRequest extends FormRequest
     {
         return [
             'interview_id' => 'required|integer|exists:interviews,id',
-            'locale' => 'required|string|in:ru,en',
         ];
     }
 }

@@ -11,12 +11,8 @@ final class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-//            SkillSeeder::class,
-//            TenantSeeder::class,
-            UserSeeder::class,
-            CandidateSeeder::class,
+         //   CandidateSeeder::class,
             VacancySeeder::class,
-//            InterviewSeeder::class,
         ]);
     }
 }

@@ -1,47 +1,53 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Ai\Stt\Job;
 
-use App\Ai\Operation\Dto\Update;
-use App\Ai\Operation\Enum\Status;
-use App\Ai\Operation\Jobs\CheckOperationJob;
-use App\Ai\Operation\Models\Operation;
-use App\Ai\Operation\Services\CrudService;
-use App\Ai\Stt\Contracts\AsyncInterface;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use App\Ai\Operation\{
+    Dto\Update as OperationUpdate,
+    Enum\Status as OperationStatus,
+    Jobs\CheckOperationJob,
+    Models\Operation,
+    Services\CrudService as OperationCrudService,
+};
+use App\Ai\Stt\Providers\SttInterface;
+use Illuminate\{
+    Bus\Queueable as Queueable,
+    Contracts\Queue\ShouldQueue,
+    Foundation\Bus\Dispatchable,
+    Queue\InteractsWithQueue,
+    Queue\SerializesModels
+};
 
 final class ProcessSttJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private Operation $operation
+        private readonly Operation $operation,
     ) {
     }
 
     public function handle(
-        AsyncInterface $stt,
-        CrudService $crudService,
+        SttInterface $stt,
+        OperationCrudService $crudService
     ): void {
-        $providerId = $stt->recognizeAsync(
-            $this->operation->subject->voiceLog->audio_path
-        );
+        $audioPath = $this->operation->subject->voiceLog->audio_path;
+
+        $providerId = $stt->recognize($audioPath);
 
         if (!$providerId) {
-            $updateOperationDto = new Update(
-                status: Status::Failed,
+            $updateOperationDto = new OperationUpdate(
+                status: OperationStatus::Failed,
             );
             $crudService->update($updateOperationDto, $this->operation);
 
             return;
         }
 
-        $updateOperationDto = new Update(
-            status: Status::InProgress,
+        $updateOperationDto = new OperationUpdate(
+            status: OperationStatus::InProgress,
             providerId: $providerId,
         );
         $crudService->update($updateOperationDto, $this->operation);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Candidate\Models;
 
+use App\Common\Enum\Locale;
 use App\Interview\Models\Interview;
 use App\Resume\Models\Resume;
 use App\Skill\Traits\HasSkills;
@@ -48,6 +49,7 @@ final class Candidate extends Model
         'education_level' => EducationLevel::class,
         'status' => Status::class,
         'source' => Source::class,
+        'locale' => Locale::class,
     ];
 
     public function tenant(): BelongsTo

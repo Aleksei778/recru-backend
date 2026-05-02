@@ -20,9 +20,7 @@ final class StoreRequest extends FormRequest
         return [
             'candidate_id' => ['required', 'exists:candidates,id'],
             'vacancy_id' => ['required', 'exists:vacancies,id'],
-            'status' => ['nullable', new Enum(Status::class)],
-            'token_expires_at' => ['nullable', 'date'],
-            'additional_info' => ['nullable', 'string'],
+            'questions_number' => ['required', 'integer', 'min:5'],
         ];
     }
 }

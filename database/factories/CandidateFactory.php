@@ -25,10 +25,10 @@ final class CandidateFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->optional(0.8)->phoneNumber(),
             'source' => fake()->randomElement(Source::cases())->value,
-            'grade' => fake()->optional(0.7)->randomElement(Grade::cases())?->value,
+            'grade' => fake()->randomElement(Grade::cases())?->value,
             'status' => fake()->randomElement(Status::cases())->value,
-            'experience_years' => fake()->optional(0.8)->numberBetween(0, 20),
-            'education_level' => fake()->optional(0.7)->randomElement(EducationLevel::cases())?->value,
+            'experience_years' => fake()->numberBetween(0, 20),
+            'education_level' => fake()->randomElement(EducationLevel::cases())?->value,
             'added_by_id' => User::factory(),
             'locale' => fake()->randomElement(Locale::cases())->value,
         ];

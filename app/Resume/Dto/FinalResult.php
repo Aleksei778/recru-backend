@@ -32,7 +32,7 @@ final readonly class FinalResult
             'phone' => $this->phone,
             'socials' => $this->socials,
             'experience_years' => $this->experienceYears,
-            'work_places' => $this->workPlaces,
+            'workplaces' => $this->workPlaces,
             'education_level' => $this->educationLevel,
             'skills' => $this->skills,
             'text_grade' => $this->textGrade,

@@ -6,12 +6,11 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        env('FRONTEND_URL', 'http://localhost:3000'),
+        env('FRONTEND_URL', 'https://recru.local'),
     ],
 
     'allowed_origins_patterns' => [
-        '#^https?://[a-z0-9-]+\.recru\.local(:\d+)?$#',
-        '#^https?://[a-z0-9-]+\.' . preg_quote(env('APP_DOMAIN', 'recru.app')) . '$#',
+        '#^https://([a-z0-9-]+\.)?recru\.local$#i',
     ],
 
     'allowed_headers' => ['*'],

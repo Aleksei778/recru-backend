@@ -12,8 +12,7 @@ use App\Vacancy\Enum\{EmploymentType, Status, WorkMode};
 use App\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 
 final class Vacancy extends Model
 {
@@ -57,11 +56,6 @@ final class Vacancy extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
-    }
-
-    public function embeddings(): HasMany
-    {
-        return $this->hasMany(Embedding::class);
     }
 
     public function interviews(): HasMany

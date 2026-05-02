@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Controllers;
 
-use App\Candidate\Dto\Candidate\{Create, Update};
-use App\Candidate\Http\Requests\{StoreRequest, UpdateRequest};
-use App\Candidate\Http\Resources\Collection;
-use App\Candidate\Http\Resources\Resource;
-use App\Candidate\Models\Candidate;
-use App\Candidate\Services\Social\SyncService as SocialService;
-use App\Candidate\Services\CrudService as CandidateService;
-use App\Candidate\Services\Workplace\SyncService as WorkplaceService;
+use App\Candidate\{
+    Http\Requests\StoreRequest,
+    Http\Requests\UpdateRequest,
+    Http\Resources\Collection,
+    Http\Resources\Resource,
+    Models\Candidate,
+    Services\Social\SyncService as SocialService,
+    Services\CrudService as CandidateService,
+    Services\Workplace\SyncService as WorkplaceService,
+    Dto\Candidate\Create,
+    Dto\Candidate\Update,
+    Repositories\Repository as CandidateRepository,
+};
+use App\Skill\Services\SyncService as SkillService;
 use App\Common\Http\Controllers\Controller as BaseController;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\{
+    Http\Response,
+    Http\Request,
+    Support\Facades\Auth
+};
 
 final readonly class Controller extends BaseController
 {
@@ -22,6 +31,8 @@ final readonly class Controller extends BaseController
         private CandidateService $candidateService,
         private WorkplaceService $workplaceService,
         private SocialService $socialService,
+        private SkillService $skillService,
+        private CandidateRepository $candidateRepository,
     ) {
     }
 
@@ -45,8 +56,9 @@ final readonly class Controller extends BaseController
 
         $candidate = $this->candidateService->create($dto);
 
-        $this->workplaceService->syncWorkPlaces($candidate, $validated['work_places'] ?? []);
+        $this->workplaceService->syncWorkPlaces($candidate, $validated['workplaces'] ?? []);
         $this->socialService->syncSocials($candidate, $validated['socials'] ?? []);
+        $this->skillService->syncSkillsByNames($candidate, $validated['skills'] ?? []);
 
         return Resource::make(
             $candidate->load(['tenant', 'addedBy', 'interviews'])
@@ -76,5 +88,16 @@ final readonly class Controller extends BaseController
         $this->candidateService->delete($candidate);
 
         return response()->noContent();
+    }
+
+    public function search(Request $request): Collection
+    {
+        $validated = $request->validate([
+            'q' => 'required|string',
+        ]);
+
+        return Collection::make(
+            $this->candidateRepository->findWithQueryAndLimit($validated['q'], 20)
+        );
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\VoiceLog\Enum\Status;
 
 return new class extends Migration
 {
@@ -19,7 +18,6 @@ return new class extends Migration
             $table->nullableMorphs('voiceable');
             $table->unsignedInteger('duration')->nullable()->comment('seconds');
             $table->unsignedBigInteger('size')->nullable()->comment('bytes');
-            $table->enum('status', Status::values())->default(Status::New);
             $table->string('mimetype', 127)->nullable();
             $table->string('yandex_id')->nullable()->index();
             $table->json('raw_response')->nullable();

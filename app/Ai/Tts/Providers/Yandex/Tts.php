@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 final readonly class Tts implements TtsInterface
 {
-    private const string TTS_URL = 'https://tts.api.cloud.yandex.net/api/v3/utteranceSynthesis';
+    private const string TTS_URL = 'https://tts.api.cloud.yandex.net/tts/v3/utteranceSynthesis';
     private const array AUDIO_FORMAT_MAP = [
         'OGG_OPUS' => ['mime' => 'audio/ogg', 'type' => 'OGG_OPUS'],
         'MP3' => ['mime' => 'audio/mpeg', 'type' => 'MP3'],
@@ -56,9 +56,11 @@ final readonly class Tts implements TtsInterface
 
             $response = $this->client
                 ->timeout(seconds: 60)
+                ->asJson()
                 ->withHeaders([
                     'Authorization' => "Api-Key $this->apiKey",
                     'x-folder-id' => $this->folderId,
+                    'Content-Type' => 'application/json',
                 ])
                 ->post(self::TTS_URL, $payload);
 
@@ -115,7 +117,7 @@ final readonly class Tts implements TtsInterface
                 continue;
             }
 
-            $binary = base64_decode($chunk);
+            $binary .= base64_decode($chunk);
         }
 
         return $binary;

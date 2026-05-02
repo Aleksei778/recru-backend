@@ -13,9 +13,9 @@ final readonly class Create
     public function __construct(
         public Vacancy $vacancy,
         public Candidate $candidate,
+        public int $questionsNumber,
         public string $token,
         public CarbonInterface $tokenExpiresAt,
-        public ?string $additionalInfo,
     ) {
     }
 
@@ -24,9 +24,9 @@ final readonly class Create
         return [
             'vacancy_id' => $this->vacancy->id,
             'candidate_id' => $this->candidate->id,
+            'questions_number' => $this->questionsNumber,
             'token' => $this->token,
             'token_expires_at' => $this->tokenExpiresAt,
-            'additional_info' => $this->additionalInfo,
         ];
     }
 }

@@ -10,7 +10,7 @@ use App\Interview\Models\Answer;
 
 final readonly class GetAnswerFromSttOperationService
 {
-    public function get(Operation $operation, string $text): void
+    public function handleSttAnswerResult(Operation $operation, string $text): void
     {
         /** @var Answer $answer */
         $answer = $operation->subject;

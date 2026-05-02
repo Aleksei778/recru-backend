@@ -6,6 +6,9 @@ namespace App\Interview\Http\Resources;
 
 use App\Interview\Models\Interview;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Candidate\Http\Resources\{Resource as CandidateResource};
+use App\Vacancy\Http\Resources\{Resource as VacancyResource};
+use App\Interview\Http\Resources\Question\{Collection as QuestionCollection};
 
 /**
  * @mixin Interview
@@ -15,18 +18,21 @@ final class Resource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->id,
             'status' => $this->status,
             'token' => $this->token,
             'token_expires_at' => $this->token_expires_at,
             'grade' => $this->grade,
             'text_grade' => $this->text_grade,
-            'additional_info' => $this->additional_info,
             'candidate' => $this->whenLoaded('candidate', function () {
-                return \App\Candidate\Http\Resources\Resource::make($this->candidate);
+                return CandidateResource::make($this->candidate);
             }),
             'vacancy' => $this->whenLoaded('vacancy', function () {
-                return \App\Vacancy\Http\Resources\Resource::make($this->vacancy);
+                return VacancyResource::make($this->vacancy);
             }),
+            'questions' => $this->whenLoaded('questions', function () {
+                return QuestionCollection::make($this->questions->load('answer'));
+            })
         ];
     }
 }

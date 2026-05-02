@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace App\VoiceLog\Models;
 
 use App\VoiceLog\Enum\Type;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class VoiceLog extends Model
 {
-    use HasFactory;
     protected $fillable = [
         'subject_id',
         'subject_type',
         'audio_path',
         'type',
-        'mime_type',
+        'mimetype',
     ];
 
     protected $casts = [

@@ -15,7 +15,14 @@ return [
         'ignore' => 'If you received this email by mistake, just ignore it.',
     ],
     'questions_ready' => [
-
+        'subject'         => 'Interview questions ready: :firstName :lastName',
+        'tag'             => 'Questions ready',
+        'headline'        => 'Interview questions have been generated',
+        'intro'           => 'Hi <strong style="color:#000">:hrName</strong>, the interview questions for the candidate below have been generated and the interview is ready to start.',
+        'candidate_label' => 'Candidate',
+        'vacancy_label'   => 'Vacancy',
+        'button'          => 'View interview',
+        'footer_note'     => 'Automatic email — do not reply',
     ],
     'interview_finished' => [
         'subject'         => ':firstName :lastName has completed the interview — :vacancy',

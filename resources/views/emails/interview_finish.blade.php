@@ -211,7 +211,7 @@
             <div class="status-block">
                 <div class="status-dot"></div>
                 <div>
-                    <div class="status-text">Обработка ответов</div>
+                    <div class="status-text">{{ __() }}</div>
                     <div class="status-sub">{{ $candidate->first_name }} {{ $candidate->last_name }} · {{ $vacancy->title }}</div>
                 </div>
             </div>

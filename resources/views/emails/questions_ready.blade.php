@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('emails.interview.subject', ['vacancy' => $vacancy->title]) }}</title>
+    <title>{{ __('emails.questions_ready.subject', ['firstName' => $candidate->first_name, 'lastName' => $candidate->last_name]) }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -14,195 +14,103 @@
             padding: 40px 16px;
         }
 
-        .wrapper {
-            max-width: 560px;
-            margin: 0 auto;
-        }
+        .wrapper { max-width: 520px; margin: 0 auto; }
 
-        /* Logo */
-        .logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
+        .logo { text-align: center; margin-bottom: 28px; }
+        .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: #000; }
 
-        .logo-text {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: #000;
-        }
-
-        /* Card */
         .card {
-            background: #ffffff;
-            border: 1px solid #000000;
-            border-radius: 24px;
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 20px;
             overflow: hidden;
         }
 
-        /* Header stripe */
         .card-header {
-            padding: 36px 40px 32px;
+            padding: 28px 32px 24px;
             border-bottom: 1px solid #e8e8e6;
         }
 
-        .greeting {
-            font-size: 13px;
-            color: #888;
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            color: #fff;
+            background: #000;
+            border-radius: 100px;
+            padding: 4px 10px;
+            margin-bottom: 14px;
         }
 
         .headline {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
             color: #000;
-            line-height: 1.25;
-            letter-spacing: -0.5px;
+            line-height: 1.3;
+            letter-spacing: -0.3px;
         }
 
-        /* Body */
-        .card-body {
-            padding: 32px 40px;
-        }
+        .card-body { padding: 28px 32px; }
 
         .text {
-            font-size: 15px;
-            line-height: 1.7;
-            color: #444;
+            font-size: 14px;
+            line-height: 1.65;
+            color: #555;
             margin-bottom: 24px;
         }
 
-        /* Vacancy block */
-        .vacancy-block {
+        .info-block {
             background: #f8f8f7;
             border: 1px solid #e8e8e6;
-            border-radius: 14px;
-            padding: 20px 24px;
-            margin-bottom: 28px;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
         }
 
-        .vacancy-label {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #999;
-            margin-bottom: 6px;
-        }
-
-        .vacancy-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #000;
-            margin-bottom: 4px;
-        }
-
-        .vacancy-company {
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
             font-size: 13px;
-            color: #666;
-        }
-
-        /* Token block */
-        .token-block {
-            background: #000;
-            border-radius: 14px;
-            padding: 20px 24px;
-            margin-bottom: 28px;
-        }
-
-        .token-label {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 10px;
-        }
-
-        .token-link {
-            display: block;
-            font-size: 13px;
-            color: #fff;
-            word-break: break-all;
-            text-decoration: none;
             line-height: 1.5;
-            opacity: 0.85;
         }
 
-        /* CTA button */
-        .btn-wrap {
-            text-align: center;
-            margin-bottom: 28px;
+        .info-row + .info-row {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e8e8e6;
         }
+
+        .info-label { color: #999; white-space: nowrap; }
+        .info-value { color: #000; font-weight: 600; text-align: right; }
+
+        .btn-wrap { text-align: center; }
 
         .btn {
             display: inline-block;
             background: #000;
             color: #fff;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.02em;
-            padding: 14px 36px;
+            padding: 12px 28px;
             border-radius: 100px;
         }
 
-        /* Expiry note */
-        .expiry {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f8f8f7;
-            border: 1px solid #e8e8e6;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 12px;
-            color: #888;
-        }
-
-        .expiry-dot {
-            width: 6px;
-            height: 6px;
-            background: #bbb;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        /* Footer */
         .card-footer {
-            padding: 20px 40px;
+            padding: 16px 32px;
             border-top: 1px solid #e8e8e6;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .footer-brand {
-            font-size: 13px;
-            font-weight: 700;
-            color: #000;
-        }
-
-        .footer-note {
-            font-size: 11px;
-            color: #bbb;
-        }
-
-        /* Below card */
-        .below {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 12px;
-            color: #bbb;
-            line-height: 1.6;
-        }
-
-        .below a {
-            color: #888;
-            text-decoration: underline;
-        }
+        .footer-brand { font-size: 13px; font-weight: 700; color: #000; }
+        .footer-note { font-size: 11px; color: #bbb; }
     </style>
 </head>
 <body>
@@ -216,46 +124,34 @@
     <div class="card">
 
         <div class="card-header">
-            <p class="greeting">{{ __('emails.interview.greeting') }}</p>
-            <h1 class="headline">{!! __('emails.interview.headline') !!}</h1>
+            <div class="tag">{{ __('emails.questions_ready.tag') }}</div>
+            <h1 class="headline">{{ __('emails.questions_ready.headline') }}</h1>
         </div>
 
         <div class="card-body">
 
             <p class="text">
-                {!! __('emails.interview.intro', [
-                    'firstName' => $candidate->first_name,
-                    'lastName' => $candidate->last_name
-                ]) !!}
+                {!! __('emails.questions_ready.intro', ['hrName' => $user->first_name]) !!}
             </p>
 
-            <div class="vacancy-block">
-                <p class="vacancy-label">{{ __('emails.interview.vacancy_label') }}</p>
-                <p class="vacancy-title">{{ $vacancy->title }}</p>
-                <p class="vacancy-company">{{ $user->tenant->name }}</p>
-            </div>
-
-            <div class="btn-wrap">
-                <a href="{{ $interviewUrl }}" class="btn">{{ __('emails.interview.button') }}</a>
-            </div>
-
-            <div class="expiry">
-                <div class="expiry-dot"></div>
-                {{ __('emails.interview.expiry', ['expiresAt' => $interview->token_expires_at->format('d.m.Y H:i')]) }}
+            <div class="info-block">
+                <div class="info-row">
+                    <span class="info-label">{{ __('emails.questions_ready.candidate_label') }}</span>
+                    <span class="info-value">{{ $candidate->first_name }} {{ $candidate->last_name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">{{ __('emails.questions_ready.vacancy_label') }}</span>
+                    <span class="info-value">{{ $interview->vacancy->title }}</span>
+                </div>
             </div>
 
         </div>
 
         <div class="card-footer">
             <span class="footer-brand">RECRU</span>
-            <span class="footer-note">{{ __('emails.interview.footer_note') }}</span>
+            <span class="footer-note">{{ __('emails.questions_ready.footer_note') }}</span>
         </div>
 
-    </div>
-
-    <div class="below">
-        {{ __('emails.interview.ignore') }}<br>
-        <a href="#">{{ __('emails.interview.privacy') }}</a> · <a href="#">{{ __('emails.interview.unsubscribe') }}</a>
     </div>
 
 </div>

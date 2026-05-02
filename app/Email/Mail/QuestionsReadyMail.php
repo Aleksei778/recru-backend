@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Email\Mail;
 
+use App\Candidate\Models\Candidate;
 use App\Interview\Models\Interview;
 use App\User\Models\User;
 use Illuminate\Bus\Queueable;
@@ -22,7 +23,10 @@ final class QuestionsReadyMail extends Mailable
 
     public function build(): self
     {
-        return $this->subject(__('emails.interview.subject', ['vacancy' => $this->interview->vacancy->title]))
+        return $this->subject(__('emails.questions_ready.subject', [
+                'firstName' => $this->interview->candidate->first_name,
+                'lastName'  => $this->interview->candidate->last_name,
+            ]))
             ->view(
                 view: 'emails.questions_ready',
                 data: [

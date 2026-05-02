@@ -19,7 +19,7 @@ final class WorkPlace extends Model
         return WorkPlaceFactory::new();
     }
 
-    protected $table = 'work_places';
+    protected $table = 'workplaces';
 
     protected $fillable = [
         'candidate_id',

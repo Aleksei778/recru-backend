@@ -51,7 +51,6 @@ final readonly class ApproveService
             new NotifyUserQuestionsReadyJob(
                 interview: $interview,
                 hr: $user,
-                locale: $locale,
             ),
         ])->dispatch();
 

@@ -4,31 +4,38 @@ declare(strict_types=1);
 
 namespace App\Resume\Http\Controllers;
 
+use App\Candidate\{
+    Http\Resources\Resource as CandidateResource,
+    Repositories\Repository as CandidateRepository,
+};
 use App\Common\Http\Controllers\Controller as BaseController;
-use App\Resume\Http\Requests\StringRequest;
-use App\Resume\Services\FileUploadService;
-use App\Resume\Http\Requests\FileRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
+use App\Resume\{
+    Http\Requests\SaveResumeRequest,
+    Http\Requests\StringRequest,
+    Http\Requests\FileRequest,
+    Services\AttachToCandidateService,
+    Services\FileUploadService,
+    Repositories\Repository as ResumeRepository,
+};
+use Illuminate\Http\{
+    JsonResponse,
+    UploadedFile
+};
 
 final readonly class Controller extends BaseController
 {
     public function __construct(
         private FileUploadService $fileUploadService,
+        private AttachToCandidateService $attachToCandidateService,
+        private CandidateRepository $candidateRepository,
+        private ResumeRepository $resumeRepository,
     ) {
     }
 
     public function parseFile(FileRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $file = $validated['resume'];
-
-        $result = $this->fileUploadService->handleFileUpload(
-            $file,
-            Auth::user()->tenant_id,
-            Auth::id()
-        );
+        $result = $this->fileUploadService->handleFileUpload($validated['resume']);
 
         return new JsonResponse($result);
     }
@@ -36,10 +43,9 @@ final readonly class Controller extends BaseController
     public function parseString(StringRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $string = $validated['resume'];
 
         $tmpPath = tempnam(sys_get_temp_dir(), 'resume_') . '.txt';
-        file_put_contents($tmpPath, $string);
+        file_put_contents($tmpPath, $validated['resume']);
 
         $file = new UploadedFile(
             $tmpPath,
@@ -49,12 +55,32 @@ final readonly class Controller extends BaseController
             test: true
         );
 
-        $result = $this->fileUploadService->handleFileUpload(
-            $file,
-            Auth::user()->tenant_id,
-            Auth::id()
-        );
+        $result = $this->fileUploadService->handleFileUpload($file);
 
         return new JsonResponse($result);
+    }
+
+    public function save(SaveResumeRequest $request): CandidateResource|JsonResponse
+    {
+        $validated = $request->validated();
+
+        $resume = $this->resumeRepository->find($validated['resume_id']);
+
+        if (!$resume) {
+            return response()->json(['error' => 'Resume not found.'], 404);
+        }
+
+        if ($validated['mode'] === 'new') {
+            $candidate = $this->attachToCandidateService->createCandidateFromResume($resume);
+        } else {
+            $this->attachToCandidateService->attachToCandidate(
+                $resume,
+                $validated['candidate_id']
+            );
+
+            $candidate = $this->candidateRepository->find($validated['candidate_id']);
+        }
+
+        return CandidateResource::make($candidate);
     }
 }

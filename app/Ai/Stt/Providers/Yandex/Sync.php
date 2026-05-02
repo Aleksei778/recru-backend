@@ -10,12 +10,36 @@ final readonly class Sync extends Common implements SttInterface
 {
     private const string SYNC_URL  = 'https://stt.api.cloud.yandex.net/stt/v3/recognize';
 
-    public function recognize(string $filePath, string $format = 'OGG_OPUS'): ?string
+    public function recognize(string $audioPath, string $format = 'OGG_OPUS'): ?string
     {
-        $uri = $this->uploadAndGetUri($filePath);
-        if (!$uri) return null;
+        $audioContent = $this->storage->get(
+            disk: config('filesystems.default'),
+            path: $audioPath
+        );
 
-        $response = $this->sendRequest(self::SYNC_URL, $uri, $format);
+        if ($audioContent === null) {
+            $this->logger->error('SpeechKit sync: cannot read audio file', [
+                'path' => $audioPath,
+            ]);
+            return null;
+        }
+
+        $response = $this->client
+            ->timeout(60)
+            ->withHeaders([
+                'Authorization' => "Api-Key $this->apiKey",
+            ])
+            ->withBody($audioContent, 'application/octet-stream')
+            ->post(self::SYNC_URL . '?' . http_build_query([
+                    'folderId' => $this->folderId,
+                    'lang' => 'ru-RU',
+                    'format' => match ($format) {
+                        'OGG_OPUS' => 'oggopus',
+                        'MP3' => 'mp3',
+                        default => 'lpcm',
+                    },
+                ]));
+
         if (!$response->successful()) {
             $this->logger->error('SpeechKit sync failed', [
                 'status' => $response->status(),
@@ -24,6 +48,6 @@ final readonly class Sync extends Common implements SttInterface
             return null;
         }
 
-        return $this->extractText($response->json()['chunks'] ?? []);
+        return $response->json('result');
     }
 }

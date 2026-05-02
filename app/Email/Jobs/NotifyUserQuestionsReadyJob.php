@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Email\Jobs;
 
-use App\Common\Enum\Locale;
 use App\Email\Services\SendService;
 use App\Interview\Models\Interview;
 use App\User\Models\User;
@@ -22,7 +21,6 @@ final class NotifyUserQuestionsReadyJob implements ShouldQueue
     public function __construct(
         private readonly Interview $interview,
         private readonly User $hr,
-        private readonly Locale $locale,
     ) {
     }
 
@@ -31,7 +29,7 @@ final class NotifyUserQuestionsReadyJob implements ShouldQueue
         $mailable = $sendService->getQuestionsReadyMail(
             interview: $this->interview,
             user: $this->hr,
-            locale: $this->locale,
+            locale: $this->hr->locale,
         );
 
         $sendService->sendQuestionsReadyMail($mailable);

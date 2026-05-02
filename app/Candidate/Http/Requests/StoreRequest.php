@@ -34,8 +34,10 @@ final class StoreRequest extends FormRequest
             'socials.*.url' => ['required', 'url'],
             'source' => ['required', new Enum(Source::class)],
             'status' => ['nullable', new Enum(Status::class)],
-            'experience_years' => ['required', 'integer', 'min:0', 'max:50'],
+            'experience_years' => ['required', 'float'],
             'education_level' => ['required', new Enum(EducationLevel::class)],
+            'skill_ids' => ['nullable', 'array'],
+            'skill_ids.*' => ['integer', 'exists:skills,id'],
         ];
     }
 }

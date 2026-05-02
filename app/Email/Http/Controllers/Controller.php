@@ -57,7 +57,7 @@ final readonly class Controller extends BaseController
         $interview = $this->interviewRepository->find($interviewId);
 
         if (!$interview) {
-            return response()->json(['message' => 'InterviewInvitationMail not found'], status:404);
+            return response()->json(['message' => 'interview not found'], 404);
         }
 
         $interviewUrl = $this->tokenService->getInterviewPageUrl($interview);

@@ -28,7 +28,7 @@ final class Question extends Model
 
     public function voiceLog(): MorphOne
     {
-        return $this->morphOne(VoiceLog::class, 'voiceable');
+        return $this->morphOne(VoiceLog::class, 'subject');
     }
 
     public function answer(): HasOne

@@ -25,7 +25,6 @@ final class InterviewFactory extends Factory
             'token_expires_at' => fake()->dateTimeBetween('now', '+7 days'),
             'grade' => fake()->optional(0.4)->numberBetween(1, 10),
             'text_grade' => fake()->optional(0.4)->paragraph(),
-            'additional_info' => fake()->optional(0.3)->sentence(),
         ];
     }
 

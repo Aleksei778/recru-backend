@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Tenant\Models\Tenant;
+use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
 
 return [
     'tenant_model' => Tenant::class,
@@ -14,7 +15,9 @@ return [
         'recru.local',
     ],
 
-    'bootstrappers' => [],
+    'bootstrappers' => [
+        QueueTenancyBootstrapper::class,
+    ],
 
     'features' => [],
 

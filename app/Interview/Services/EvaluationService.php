@@ -48,7 +48,7 @@ final readonly class EvaluationService
             status: Status::Pending,
         ));
 
-        CheckOperationJob::dispatch($operation)->delay(now()->addSeconds(3));
+        CheckOperationJob::dispatch($operation->id)->delay(now()->addSeconds(3));
 
         return true;
     }

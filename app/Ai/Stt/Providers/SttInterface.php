@@ -6,5 +6,5 @@ namespace App\Ai\Stt\Providers;
 
 interface SttInterface
 {
-    public function recognize(string $filePath, string $format = 'OGG_OPUS'): ?string;
+    public function recognize(string $audioPath, string $format = 'OGG_OPUS'): ?string;
 }

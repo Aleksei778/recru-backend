@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Gpt\Prompts\Resume;
 
-use App\Ai\Contracts\Dto\GptMessage;
+use App\Ai\Gpt\Dto\{Message as GptMessage};
 
 final readonly class EvaluationGenerator
 {
@@ -12,10 +12,10 @@ final readonly class EvaluationGenerator
     {
         return <<<PROMPT
             Вы — опытный технический рекрутер. Оцените кандидата на основе текста его резюме.
-            Дайте оценку по шкале от 1 до 100 и краткий текстовый фидбек (сильные стороны, слабые стороны, соответствие рынку).
+            Дайте оценку по шкале от 1 до 10 и краткий текстовый фидбек (сильные стороны, слабые стороны, соответствие рынку).
             Верните ответ строго в формате JSON:
             {
-              "score": 85,
+              "score": 4,
               "feedback": "Текст фидбека"
             }
             Возвращайте ТОЛЬКО JSON без пояснений.
@@ -27,8 +27,14 @@ final readonly class EvaluationGenerator
         $prompt = $this->generate();
 
         return [
-            GptMessage::system($prompt),
-            GptMessage::user("Текст резюме:\n\n" . $text),
+            new GptMessage(
+                role: 'system',
+                text: $prompt
+            ),
+            new GptMessage(
+                role: 'user',
+                text: "Текст резюме:\n\n" . $text
+            ),
         ];
     }
 }

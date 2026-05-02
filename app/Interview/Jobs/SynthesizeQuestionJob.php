@@ -14,7 +14,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
-use Illuminate\Support\Facades\Storage;
+use App\Common\Services\Storage;
 
 final class SynthesizeQuestionJob implements ShouldQueue
 {
@@ -28,9 +28,9 @@ final class SynthesizeQuestionJob implements ShouldQueue
     }
 
     public function handle(
-        TtsInterface        $tts,
-        StoragePathHelper   $storagePathHelper,
-        Storage             $storage,
+        TtsInterface $tts,
+        StoragePathHelper $storagePathHelper,
+        Storage $storage,
         VoiceLogCrudService $voiceLogCrudService,
     ): void {
         $result = $tts->synthesize($this->question->text);
@@ -41,8 +41,8 @@ final class SynthesizeQuestionJob implements ShouldQueue
             return;
         }
 
-        $path = $storagePathHelper->getStoragePath($this->question->id);
-        $storage->put('yandex_object_storage', $path, $result->audioContent);
+        $path = $storagePathHelper->getStoragePath($this->question);
+        $storage->put(config('filesystems.default'), $path, $result->audioContent);
 
         $voiceLogCrudService->create(new VoiceLogCreateDto(
             subjectId: $this->question->id,

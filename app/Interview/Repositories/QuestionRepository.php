@@ -6,6 +6,7 @@ namespace App\Interview\Repositories;
 
 use App\Interview\Models\Interview;
 use App\Interview\Models\Question;
+use Illuminate\Support\Collection;
 
 final readonly class QuestionRepository
 {
@@ -13,14 +14,13 @@ final readonly class QuestionRepository
      * Find multiple questions with answers by interview ID.
      *
      * @param Interview $interview
-     * @return Question[]
+     * @return Collection<Question>
      */
-    public function findManyByInterviewWithAnswers(Interview $interview): array
+    public function findManyByInterviewWithAnswers(Interview $interview): Collection
     {
         return Question::where('interview_id', $interview->id)
             ->with('answer')
-            ->get()
-            ->toArray();
+            ->get();
     }
 
     public function find(int $id): ?Question

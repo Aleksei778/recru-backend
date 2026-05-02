@@ -23,8 +23,8 @@ final readonly class Create
             'subject_id' => $this->subjectId,
             'subject_type' => $this->subjectType,
             'audio_path' => $this->audioPath,
-            'mime_type' => $this->mimeType,
-            'type' => $this->type->value,
+            'mimetype' => $this->mimeType,
+            'type' => $this->type,
         ];
     }
 }

@@ -21,7 +21,7 @@ final readonly class InterviewRepository
 
     public function paginateWithCandidateAndVacancy(): LengthAwarePaginator
     {
-        return Interview::with(['candidate', 'vacancy'])
+        return Interview::with(['candidate', 'vacancy', 'questions'])
             ->latest()
             ->paginate();
     }

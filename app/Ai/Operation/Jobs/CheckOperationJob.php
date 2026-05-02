@@ -9,9 +9,9 @@ use App\Ai\Operation\Services\CheckResultService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{SerializesModels, InteractsWithQueue};
-use Illuminate\Contracts\Queue\{ShouldBeUnique, ShouldQueue};
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-final class CheckOperationJob implements ShouldQueue, ShouldBeUnique
+final class CheckOperationJob implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, Dispatchable, SerializesModels;
 
@@ -27,7 +27,7 @@ final class CheckOperationJob implements ShouldQueue, ShouldBeUnique
     {
         $result = $service->check($this->operationId);
 
-        if ($result === CheckResult::NotReady) {
+        if (in_array($result, [CheckResult::NotReady, CheckResult::Failed], true)) {
             $this->release($this->backoff);
         }
     }

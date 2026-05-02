@@ -16,4 +16,4 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::get('skills', [SkillController::class, 'index']);
+Route::get('skills/search', [SkillController::class, 'search']);

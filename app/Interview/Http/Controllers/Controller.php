@@ -15,6 +15,7 @@ use App\Interview\Http\Requests\UpdateQuestionsRequest;
 use App\Interview\Http\Resources\Resource;
 use App\Interview\Repositories\InterviewRepository;
 use App\Interview\Services\Questions\ApproveService;
+use App\Interview\Services\Questions\GenerateService;
 use App\Vacancy\Repositories\VacancyRepository;
 use Carbon\Carbon;
 use App\Interview\Models\{Interview, Question};
@@ -34,6 +35,7 @@ final readonly class Controller extends BaseController
         private TokenService $tokenService,
         private Storage $storage,
         private ApproveService $approveService,
+        private GenerateService $generateService,
     ) {
     }
 
@@ -44,7 +46,7 @@ final readonly class Controller extends BaseController
         return Resource::collection($interviews);
     }
 
-    public function store(StoreRequest $request): Resource
+    public function store(StoreRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
@@ -52,20 +54,24 @@ final readonly class Controller extends BaseController
         $candidate = $this->candidateRepository->find($validated['candidate_id']);
         $token = $this->tokenService->generateToken();
 
-        $dto = new Create(
+        $interview = $this->createService->create(new Create(
             vacancy: $vacancy,
             candidate: $candidate,
+            questionsNumber: $validated['questions_number'],
             token: $token,
-            tokenExpiresAt: Carbon::parse($validated['token_expires_at']),
-            additionalInfo: $validated['additional_info'],
-        );
+            tokenExpiresAt: Carbon::now()->addDays(7),
+        ));
 
-        $interview = $this->createService->create($dto);
+        $this->generateService->generate($interview);
 
-        return Resource::make($interview);
+        return new JsonResponse([
+            'interview' => Resource::make($interview->load('questions')),
+            'token' => $token,
+            'link' => $this->tokenService->getInterviewPageUrl($interview),
+        ]);
     }
 
-    public function nextQuestion(string $token): JsonResponse
+    public function nextQuestion(string $subdomain, string $token): JsonResponse
     {
         $interview = $this->interviewRepository->findByToken($token);
 
@@ -77,6 +83,8 @@ final readonly class Controller extends BaseController
             $interview->markAsInProgress();
         }
 
+        $interview->markAsInProgress();
+
         if (!$interview->isInProgress()) {
             return response()->json(['error' => 'Interview not available'], 422);
         }
@@ -86,25 +94,29 @@ final readonly class Controller extends BaseController
         if (!$question) {
             $this->manageService->complete($interview);
 
-            return response()->json(['status' => 'completed']);
+            return response()->json([
+                'is_completed' => true,
+                'question' => null,
+                'audio_url' => null
+            ]);
         }
 
         return response()->json([
+            'is_completed' => false,
             'question' => $question,
             'audio_url' => $this->storage->url(
-                disk: 'yandex_object_storage',
+                disk: config('filesystems.default'),
                 path: $question->voiceLog->audio_path
             ),
         ]);
     }
 
-    public function show(Interview $interview): Resource
+    public function show(string $subdomain, Interview $interview): Resource
     {
         $interview->load([
             'candidate',
             'vacancy',
             'questions',
-            'answers',
         ]);
 
         return Resource::make($interview);
@@ -112,6 +124,7 @@ final readonly class Controller extends BaseController
 
     public function answer(
         Request $request,
+        string $subdomain,
         string $token,
         Question $question
     ): JsonResponse {
@@ -132,15 +145,21 @@ final readonly class Controller extends BaseController
         return response()->json(['status' => 'ok']);
     }
 
-    public function updateQuestions(UpdateQuestionsRequest $request, Interview $interview): JsonResponse
-    {
+    public function updateQuestions(
+        UpdateQuestionsRequest $request,
+        string $subdomain,
+        Interview $interview
+    ): JsonResponse {
         $this->manageService->updateQuestions($request->validated('questions'));
 
         return response()->json(['status' => 'ok']);
     }
 
-    public function approveQuestions(UpdateQuestionsRequest $request, Interview $interview): JsonResponse
-    {
+    public function approveQuestions(
+        UpdateQuestionsRequest $request,
+        string $subdomain,
+        Interview $interview
+    ): JsonResponse {
         $locale = Locale::from(config('app.locale', 'ru'));
 
         $this->approveService->approve(
@@ -153,8 +172,11 @@ final readonly class Controller extends BaseController
         return response()->json(['status' => 'ok']);
     }
 
-    public function close(CloseRequest $request, Interview $interview): JsonResponse
-    {
+    public function close(
+        CloseRequest $request,
+        string $subdomain,
+        Interview $interview
+    ): JsonResponse {
         $decision = Decision::from($request->validated('decision'));
 
         $this->manageService->close($interview, $decision);

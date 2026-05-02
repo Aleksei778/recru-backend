@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Skill\Repositories;
 
 use App\Skill\Models\Skill;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 final readonly class Repository
@@ -23,5 +22,26 @@ final readonly class Repository
             })
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * @param  string[]  $names
+     * @return int[]
+     */
+    public function findIdsByNames(array $names): array
+    {
+        $normalized = array_map('mb_strtolower', $names);
+
+        return Skill::get(['id', 'name', 'aliases'])
+            ->filter(function (Skill $skill) use ($normalized) {
+                if (in_array(mb_strtolower($skill->name), $normalized, true)) {
+                    return true;
+                }
+
+                return array_any((array)$skill->aliases, fn($alias) => in_array(mb_strtolower($alias), $normalized, true));
+
+            })
+            ->pluck('id')
+            ->all();
     }
 }

@@ -22,36 +22,27 @@ final readonly class FileUploadService
     ) {
     }
 
-    public function handleFileUpload(
-        UploadedFile $file,
-        int $tenantId,
-        int $savedById,
-    ): array {
+    public function handleFileUpload(UploadedFile $file): array
+    {
         $text = match ($file->getClientMimeType()) {
             'application/pdf' => $this->pdfExtractor->extract($file),
             'text/plain' => $this->txtExtractor->extract($file),
             default => throw new \InvalidArgumentException('Unsupported file type'),
         };
 
-        $path = "tenant/$tenantId/resumes/" . $file->getClientOriginalName();
+        $path = "resumes/" . $file->getClientOriginalName();
 
         $this->storage->put(
-            disk: config('app.storage_provider'),
+            disk: config('filesystems.default'),
             path: $path,
             content: $file->getContent()
         );
 
-        return DB::transaction(function () use ($text, $path, $file, $savedById) {
-            $resume = $this->crudService->create(
-                new Create(
-                    filePath: $path,
-                    fileName: $file->getClientOriginalName(),
-                    mimeType: $file->getClientMimeType(),
-                    size: $file->getSize(),
-                    storageDisk: config('app.storage_provider'),
-                    savedById: $savedById
-                )
-            );
+        return DB::transaction(function () use ($text, $path, $file) {
+            $resume = $this->crudService->create(new Create(
+                filePath: $path,
+                mimetype: $file->getClientMimeType(),
+            ));
 
             $parseOpId = $this->parseService->parse($text, $resume);
             $evalOpId = $this->evaluationService->evaluate($text, $resume);

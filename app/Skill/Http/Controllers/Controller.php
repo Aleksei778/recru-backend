@@ -15,7 +15,7 @@ final readonly class Controller
     ) {
     }
 
-    public function index(Request $request): Collection
+    public function search(Request $request): Collection
     {
         $validated = $request->validate([
             'q' => 'required|string',

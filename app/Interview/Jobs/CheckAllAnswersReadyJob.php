@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\{InteractsWithQueue, SerializesModels};
 
-final readonly class CheckAllAnswersReadyJob implements ShouldQueue
+final class CheckAllAnswersReadyJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

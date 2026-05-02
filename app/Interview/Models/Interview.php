@@ -23,10 +23,10 @@ final class Interview extends Model
         'vacancy_id',
         'status',
         'token',
+        'questions_number',
         'token_expires_at',
         'grade',
         'text_grade',
-        'additional_info',
     ];
 
     protected $casts = [
@@ -72,6 +72,16 @@ final class Interview extends Model
     public function isProcessing(): bool
     {
         return $this->status === Status::Processing;
+    }
+
+    public function markAsGeneratingQuestions(): void
+    {
+        $this->update(['status' => Status::GeneratingQuestions]);
+    }
+
+    public function markAsQuestionsReview(): void
+    {
+        $this->update(['status' => Status::QuestionsReview]);
     }
 
     public function markAsSynthesizing(): void

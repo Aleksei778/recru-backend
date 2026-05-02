@@ -42,7 +42,7 @@ final readonly class ManageService
 
     public function submitAnswer(Question $question, UploadedFile $audio): void
     {
-        $storageProvider = config('app.storage_provider');
+        $storageProvider = config('filesystems.default');
 
         $path = StoragePathHelper::getStoragePath($question);
         $this->storage->put($storageProvider, $path, $audio->getContent());
