@@ -22,6 +22,7 @@ use App\Common\Http\Controllers\Controller as BaseController;
 use Illuminate\{
     Http\Response,
     Http\Request,
+    Support\Collection as SupportCollection,
     Support\Facades\Auth
 };
 
@@ -90,14 +91,12 @@ final readonly class Controller extends BaseController
         return response()->noContent();
     }
 
-    public function search(Request $request): Collection
+    public function search(Request $request): SupportCollection
     {
         $validated = $request->validate([
             'q' => 'required|string',
         ]);
 
-        return Collection::make(
-            $this->candidateRepository->findWithQueryAndLimit($validated['q'], 20)
-        );
+        return $this->candidateRepository->findWithQueryAndLimit($validated['q'], 20);
     }
 }

@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace App\Interview\Http\Controllers;
 
-use App\Candidate\Repositories\Repository as CandidateRepository;
-use App\Common\Enum\Locale;
-use App\Common\Services\Storage;
-use App\Interview\Dto\Create;
-use App\Interview\Enum\Decision;
-use App\Interview\Http\Requests\CloseRequest;
-use App\Interview\Http\Requests\StoreRequest;
-use App\Interview\Http\Requests\UpdateQuestionsRequest;
-use App\Interview\Http\Resources\Resource;
-use App\Interview\Repositories\InterviewRepository;
-use App\Interview\Services\Questions\ApproveService;
-use App\Interview\Services\Questions\GenerateService;
 use App\Vacancy\Repositories\VacancyRepository;
+use App\Candidate\Repositories\Repository as CandidateRepository;
+use App\Common\{
+    Enum\Locale,
+    Services\Storage,
+    Http\Controllers\Controller as BaseController
+};
+use App\Interview\{
+    Dto\Create,
+    Enum\Decision,
+    Http\Requests\CloseRequest,
+    Http\Requests\StoreRequest,
+    Http\Requests\UpdateQuestionsRequest,
+    Http\Resources\Resource,
+    Repositories\InterviewRepository,
+    Services\Questions\ApproveService,
+    Services\Questions\GenerateService,
+    Services\ManageService,
+    Services\CrudService,
+    Services\TokenService,
+    Models\Interview,
+    Models\Question,
+};
 use Carbon\Carbon;
-use App\Interview\Models\{Interview, Question};
-use App\Interview\Services\{ManageService, CrudService, TokenService};
-use Illuminate\Http\{JsonResponse, Request};
-use App\Common\Http\Controllers\Controller as BaseController;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\{
+    JsonResponse,
+    Request,
+    Resources\Json\AnonymousResourceCollection
+};
 
 final readonly class Controller extends BaseController
 {
@@ -194,5 +204,4 @@ final readonly class Controller extends BaseController
 
         return response()->json(['token' => $token]);
     }
-
 }

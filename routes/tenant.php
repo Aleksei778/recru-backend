@@ -29,9 +29,9 @@ Route::prefix('api')->group(function () {
         });
 
         Route::apiResource('vacancies', VacancyController::class);
-        Route::apiResource('candidates', CandidateController::class);
 
         Route::get('candidates/search', [CandidateController::class, 'search']);
+        Route::apiResource('candidates', CandidateController::class);
 
         Route::prefix('resume')->group(function () {
             Route::post('parse/file', [ResumeController::class, 'parseFile']);

@@ -18,6 +18,7 @@ final class SaveResumeRequest extends FormRequest
         return [
             'mode' => ['required', 'in:new,existing'],
             'candidate_id' => ['required_if:mode,existing', 'exists:candidates,id'],
+            'resume_id' => ['required', 'exists:resumes,id'],
         ];
     }
 }
