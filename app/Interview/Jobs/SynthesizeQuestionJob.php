@@ -36,9 +36,7 @@ final class SynthesizeQuestionJob implements ShouldQueue
         $result = $tts->synthesize($this->question->text);
 
         if (!$result) {
-            $this->fail('TTS synthesis failed for question ' . $this->question->id);
-
-            return;
+            throw new \RuntimeException('TTS synthesis failed for question ' . $this->question->id);
         }
 
         $path = $storagePathHelper->getStoragePath($this->question);

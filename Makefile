@@ -10,7 +10,7 @@ COMPOSE = docker compose -p recru_backend -f docker-compose.local.yaml
         laravel-setup project-installation \
         db-migrate db-migrate-force db-reset db-rollback db-fresh db-fresh-seed db-make-migration db-seed db-seed-class \
         logs logs-container logs-laravel containers-status \
-        help
+        help test
 
 # === DOCKER OPERATIONS ===
 docker-up:

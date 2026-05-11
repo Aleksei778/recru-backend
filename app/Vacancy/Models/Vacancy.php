@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Vacancy\Models;
 
+use App\Candidate\Enum\Grade;
 use App\Interview\Models\Interview;
 use App\Skill\Traits\HasSkills;
 use App\Tenant\Models\Tenant;
+use App\Tenant\Traits\BelongsToTenant;
 use Database\Factories\VacancyFactory;
 use App\Vacancy\Enum\{EmploymentType, Status, WorkMode};
 use App\User\Models\User;
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 final class Vacancy extends Model
 {
     /** @use HasFactory<VacancyFactory> */
-    use HasFactory, HasSkills;
+    use HasFactory, HasSkills, BelongsToTenant;
 
     protected static function newFactory(): VacancyFactory
     {
@@ -35,6 +37,8 @@ final class Vacancy extends Model
         'salary_min',
         'salary_max',
         'salary_currency',
+        'grade',
+        'experience_years',
         'status',
         'location',
         'published_at',
@@ -46,6 +50,7 @@ final class Vacancy extends Model
         'employment_type' => EmploymentType::class,
         'work_mode' => WorkMode::class,
         'status' => Status::class,
+        'grade' => Grade::class,
     ];
 
     public function tenant(): BelongsTo

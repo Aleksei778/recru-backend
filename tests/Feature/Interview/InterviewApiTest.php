@@ -6,23 +6,17 @@ namespace Tests\Feature\Interview;
 
 use App\Candidate\Models\Candidate;
 use App\Interview\Enum\Status;
-use App\Interview\Models\Interview;
+use App\Interview\Models\{Interview, Question};
 use App\Vacancy\Models\Vacancy;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Concerns\WithTenant;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
-class InterviewApiTest extends TestCase
+final class InterviewApiTest extends FeatureTestCase
 {
-    use RefreshDatabase, WithTenant;
-
     protected function setUp(): void
     {
         parent::setUp();
         $this->setUpTenant();
     }
-
-    // --- index ---
 
     public function test_index_returns_paginated_interviews(): void
     {
@@ -49,8 +43,6 @@ class InterviewApiTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    // --- show ---
-
     public function test_show_returns_interview_with_questions(): void
     {
         $interview = Interview::factory()->create([
@@ -74,8 +66,6 @@ class InterviewApiTest extends TestCase
         $response->assertNotFound();
     }
 
-    // --- public routes (no auth needed) ---
-
     public function test_next_question_returns_404_for_invalid_token(): void
     {
         $response = $this->json(
@@ -88,17 +78,21 @@ class InterviewApiTest extends TestCase
 
     public function test_next_question_returns_422_when_interview_not_in_valid_state(): void
     {
-        $interview = Interview::factory()->create(['status' => Status::Pending]);
+        $candidate = Candidate::factory()->forTenant($this->tenant, $this->user)->create();
+        $vacancy = Vacancy::factory()->forTenant($this->tenant, $this->user)->create();
+        $interview = Interview::factory()->create([
+            'candidate_id' => $candidate->id,
+            'vacancy_id' => $vacancy->id,
+            'status' => Status::Pending,
+        ]);
 
         $response = $this->json(
             'GET',
-            $this->tenantUrl("api/candidate/interviews/{$interview->token}/questions/next")
+            $this->tenantUrl("api/candidate/interviews/$interview->token/questions/next")
         );
 
         $response->assertUnprocessable();
     }
-
-    // --- close ---
 
     public function test_close_returns_422_for_invalid_decision(): void
     {
@@ -111,16 +105,15 @@ class InterviewApiTest extends TestCase
         $response->assertUnprocessable();
     }
 
-    // --- answer (public) ---
-
     public function test_answer_returns_422_when_interview_not_in_progress(): void
     {
+
         $interview = Interview::factory()->create(['status' => Status::Pending]);
-        $question = \App\Interview\Models\Question::factory()->create(['interview_id' => $interview->id]);
+        $question = Question::factory()->create(['interview_id' => $interview->id]);
 
         $response = $this->json(
             'POST',
-            $this->tenantUrl("api/candidate/interviews/{$interview->token}/questions/{$question->id}/answer")
+            $this->tenantUrl("api/candidate/interviews/$interview->token/questions/$question->id/answer")
         );
 
         $response->assertUnprocessable();

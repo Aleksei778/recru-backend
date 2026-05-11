@@ -32,4 +32,39 @@ final class EmailFactory extends Factory
             'sent_at' => fake()->optional(0.8)->dateTimeBetween('-1 month', 'now'),
         ];
     }
+
+    public function pending(): static
+    {
+        return $this->state([
+            'status' => Status::Pending->value,
+            'sent_at' => null,
+        ]);
+    }
+
+    public function sent(): static
+    {
+        return $this->state([
+            'status' => Status::Sent->value,
+            'sent_at' => fake()->dateTimeBetween('-1 month', 'now'),
+        ]);
+    }
+
+    public function failed(): static
+    {
+        return $this->state([
+            'status' => Status::Failed->value,
+            'sent_at' => null,
+        ]);
+    }
+
+    public function forInterview(Interview $interview, User $sender): static
+    {
+        return $this->state([
+            'interview_id' => $interview->id,
+            'sender_id' => $sender->id,
+            'recipient_type' => Candidate::class,
+            'recipient_id' => $interview->candidate_id,
+            'locale' => fake()->randomElement(Locale::cases())->value,
+        ]);
+    }
 }

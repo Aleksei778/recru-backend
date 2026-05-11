@@ -10,10 +10,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasOne, MorphOne};
 
-final class Question extends Model
+class Question extends Model
 {
     /** @use HasFactory<QuestionFactory> */
     use HasFactory;
+
+    public static function factory(): QuestionFactory
+    {
+        return new QuestionFactory();
+    }
 
     protected $fillable = [
         'interview_id',

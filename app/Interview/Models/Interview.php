@@ -13,10 +13,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-final class Interview extends Model
+class Interview extends Model
 {
     /** @use HasFactory<InterviewFactory> */
     use HasFactory;
+
+    public static function newFactory(): InterviewFactory
+    {
+        return InterviewFactory::new();
+    }
 
     protected $fillable = [
         'candidate_id',
@@ -86,9 +91,12 @@ final class Interview extends Model
 
     public function markAsSynthesizing(): void
     {
-        $this->update([
-            'status' => Status::Synthesizing,
-        ]);
+        $this->update(['status' => Status::Synthesizing]);
+    }
+
+    public function markAsReady(): void
+    {
+        $this->update(['status' => Status::Ready]);
     }
 
     public function markAsInProgress(): void

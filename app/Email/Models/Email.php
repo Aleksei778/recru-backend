@@ -19,6 +19,11 @@ final class Email extends Model
     /** @use HasFactory<EmailFactory> */
     use HasFactory;
 
+    protected static function newFactory(): EmailFactory
+    {
+        return EmailFactory::new();
+    }
+
     protected $table = 'emails';
 
     protected $fillable = [

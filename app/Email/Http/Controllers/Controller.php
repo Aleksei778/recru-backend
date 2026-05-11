@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Email\Http\Controllers;
 
-use App\Common\Enum\Locale;
 use App\Common\Http\Controllers\Controller as BaseController;
 use App\Email\Http\Requests\SendRequest;
 use App\Email\Http\Resources\Collection;
@@ -46,12 +45,11 @@ final readonly class Controller extends BaseController
         );
     }
 
-    public function send(SendRequest $request): JsonResponse
+    public function sendInvitation(SendRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
         $user = $request->user();
-        $locale = Locale::from($validated['locale']);
         $interviewId = (int)$validated['interview_id'];
 
         $interview = $this->interviewRepository->find($interviewId);
@@ -66,16 +64,11 @@ final readonly class Controller extends BaseController
             interview: $interview,
             user: $user,
             interviewUrl: $interviewUrl,
-            locale: $locale,
         );
 
         $this->sendService->sendInterviewInvitationMail($mailable);
 
-        $this->createService->create(
-            user: $user,
-            interview: $interview,
-            locale: $locale,
-        );
+        $this->createService->createInvitation($user, $interview);
 
         return response()->json(['message' => 'Email sent successfully']);
     }

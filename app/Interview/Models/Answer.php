@@ -16,6 +16,11 @@ final class Answer extends Model
     /** @use HasFactory<AnswerFactory> */
     use HasFactory;
 
+    public static function newFactory(): AnswerFactory
+    {
+        return AnswerFactory::new();
+    }
+
     protected $fillable = [
         'question_id',
         'text',

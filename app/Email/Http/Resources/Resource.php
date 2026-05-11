@@ -19,6 +19,12 @@ final class Resource extends JsonResource
             'id' => $this->id,
             'interview_id' => $this->interview_id,
             'sender_id' => $this->sender_id,
+            'sender' => $this->whenLoaded('sender', function () {
+                return $this->sender;
+            }),
+            'recipient' => $this->whenLoaded('recipient', function () {
+                return $this->recipient;
+            }),
             'recipient_type' => $this->recipient_type,
             'recipient_id' => $this->recipient_id,
             'status' => $this->status?->value,

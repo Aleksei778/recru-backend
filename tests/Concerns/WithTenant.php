@@ -16,6 +16,8 @@ trait WithTenant
     {
         $this->tenant = Tenant::factory()->create(['subdomain' => 'acme']);
         $this->user = User::factory()->forTenant($this->tenant)->create();
+
+        tenancy()->initialize($this->tenant);
     }
 
     protected function tenantUrl(string $path): string

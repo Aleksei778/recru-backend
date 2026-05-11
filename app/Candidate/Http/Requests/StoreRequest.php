@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Requests;
 
-use App\Candidate\Enum\{EducationLevel, Source, Status};
+use App\Candidate\Enum\{EducationLevel, Grade, Source, Status};
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -30,11 +30,12 @@ final class StoreRequest extends FormRequest
             'workplaces.*.started_at' => ['required', 'date'],
             'workplaces.*.end_at' => ['nullable', 'date'],
             'socials' => ['required', 'array'],
+            'grade' => ['required', new Enum(Grade::class)],
             'socials.*.name' => ['required', 'string', 'max:255'],
             'socials.*.url' => ['required', 'url'],
             'source' => ['required', new Enum(Source::class)],
             'status' => ['nullable', new Enum(Status::class)],
-            'experience_years' => ['required', 'float'],
+            'experience_years' => ['required', 'numeric'],
             'education_level' => ['required', new Enum(EducationLevel::class)],
             'skill_ids' => ['nullable', 'array'],
             'skill_ids.*' => ['integer', 'exists:skills,id'],

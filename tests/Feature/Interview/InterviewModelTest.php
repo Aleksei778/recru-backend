@@ -2,17 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Interview;
+namespace Tests\Feature\Interview;
 
 use App\Interview\Enum\Status;
 use App\Interview\Models\Interview;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
-class InterviewModelTest extends TestCase
+final class InterviewModelTest extends FeatureTestCase
 {
-    use RefreshDatabase;
-
     public function test_is_pending_returns_true_when_status_is_pending(): void
     {
         $interview = Interview::factory()->create(['status' => Status::Pending]);

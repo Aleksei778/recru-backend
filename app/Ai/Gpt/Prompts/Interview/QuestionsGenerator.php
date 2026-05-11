@@ -7,7 +7,7 @@ namespace App\Ai\Gpt\Prompts\Interview;
 use App\Ai\Gpt\Dto\{Message as GptMessage};
 use App\Interview\Models\Interview;
 
-final readonly class QuestionsGenerator
+ class QuestionsGenerator
 {
     private function generate(Interview $interview): string
     {
@@ -18,15 +18,20 @@ final readonly class QuestionsGenerator
             ? 'Русский'
             : 'Английский';
 
-        $vacancySkillsStr = implode(', ', $vacancy->skills);
-        $candidateSkillsStr = implode(', ', $candidate->skills);
+        $vacancySkillsStr = implode(', ', $vacancy->skills->toArray());
+        $candidateSkillsStr = implode(', ', $candidate->skills->toArray());
+
+        $candidateGrade = $candidate->grade ?? null;
+        $vacancyGrade = $vacancy->grade ?? null;
 
         return "Ты — профессиональный IT-рекрутер. Твоя задача — составить {$interview->questions_number} вопросов для первичного интервью кандидата на вакансию: '{$vacancy->title}'.
-            Описание вакансии: $vacancy->description. Скиллы, требуемые под вакансию: $vacancySkillsStr
-            Скиллы кандидата: $candidateSkillsStr
+            Описание вакансии: $vacancy->description
+            Скиллы кандидата: $candidateSkillsStr. Скиллы, требуемые под вакансию: $vacancySkillsStr
+            Уровень кандидата: $candidateGrade. Уровень, требуемый в рамках вакансии: $vacancyGrade
             Интервью составляется строго индивидуально под вакансию и кандидата, чтобы раскрыть его наилучшим образом
             Вопросы должны проверять как hard skills, так и soft skills (но первое - в большей мере).
             Выдай только список вопросов, каждый вопрос с новой строки, без номеров и лишнего текста.
+            Также вставляй прямо задачи с кодом.
             Язык вопросов: $language
            ";
     }

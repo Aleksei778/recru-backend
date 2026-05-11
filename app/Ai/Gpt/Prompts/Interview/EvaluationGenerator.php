@@ -8,7 +8,7 @@ use App\Ai\Gpt\Dto\{Message as GptMessage};
 use App\Interview\Models\Interview;
 use App\Interview\Repositories\QuestionRepository;
 
-final readonly class EvaluationGenerator
+class EvaluationGenerator
 {
     public function __construct(
         private QuestionRepository $questionRepository,
@@ -28,15 +28,18 @@ final readonly class EvaluationGenerator
 
         $prompt = "Оцени ответы кандидата на интервью для вакансии '{$interview->vacancy->title}'.\n\n";
 
-        $vacancySkillsStr = implode(', ', $vacancy->skills);
-        $candidateSkillsStr = implode(', ', $candidate->skills);
+        $vacancySkillsStr = $vacancy->skills->isNotEmpty() ?
+            'Скиллы, требуемые под вакансию: ' . implode(', ', $vacancy->skills->toArray()) :
+            '';
+        $candidateSkillsStr = $candidate->skills->isNotEmpty() ?
+            'Скиллы кандидата: ' . implode(', ', $vacancy->skills->toArray()) :
+            '';
 
         $prompt .= "Ты — профессиональный IT-рекрутер. Твоя задача — оценить ответы кандидата на вакансию: '$vacancy->title'.
-            Описание вакансии: $vacancy->description. Скиллы, требуемые под вакансию: $vacancySkillsStr
-            Скиллы кандидата: $candidateSkillsStr
-            Интервью оценивается непредвзято, строго индивидуально под вакансию и кандидата, чтобы раскрыть его наилучшим образом
-            Язык оценки: $language
-           ";
+            Описание вакансии: $vacancy->description. Язык оценки: $language.
+            Интервью оценивается непредвзято, строго индивидуально под вакансию и кандидата, чтобы раскрыть его наилучшим образом";
+
+        $prompt .= $vacancySkillsStr . $candidateSkillsStr;
 
         foreach ($questions as $q) {
             $answerText = $q->answer

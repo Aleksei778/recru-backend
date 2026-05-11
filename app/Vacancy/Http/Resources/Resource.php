@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Vacancy\Http\Resources;
 
+use App\Skill\Http\Resources\Collection as SkillCollection;
 use App\Vacancy\Models\Vacancy;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,13 +29,14 @@ final class Resource extends JsonResource
             'status' => $this->status?->value,
             'location' => $this->location,
             'published_at' => $this->published_at,
+            'experience_years' => $this->experience_years,
             'closed_at' => $this->closed_at,
-            'created_by_id' => $this->created_by_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'created_by' => $this->whenLoaded('createdBy'),
-            'tenant' => $this->whenLoaded('tenant'),
-            'skills' => $this->whenLoaded('skills'),
+            'grade' => $this->grade,
+            'skills' => $this->whenLoaded('skills', function () {
+                return new SkillCollection($this->skills);
+            }),
         ];
     }
 }

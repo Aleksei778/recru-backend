@@ -2,28 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Candidate;
+namespace Tests\Feature\Candidate;
 
 use App\Candidate\Models\Candidate;
 use App\Candidate\Repositories\Repository;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
-class RepositoryTest extends TestCase
+
+final class RepositoryTest extends FeatureTestCase
 {
-    use RefreshDatabase;
-
     private Repository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->setUpTenant();
         $this->repository = new Repository();
     }
 
     public function test_find_returns_candidate_by_id(): void
     {
-        $candidate = Candidate::factory()->create();
+        $candidate = Candidate::factory()->forTenant($this->tenant, $this->user)->create();
 
         $result = $this->repository->find($candidate->id);
 
@@ -40,8 +39,8 @@ class RepositoryTest extends TestCase
 
     public function test_search_finds_by_first_name(): void
     {
-        Candidate::factory()->create(['first_name' => 'Aleksandr', 'last_name' => 'Petrov']);
-        Candidate::factory()->create(['first_name' => 'Maria', 'last_name' => 'Ivanova']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['first_name' => 'Aleksandr', 'last_name' => 'Petrov']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['first_name' => 'Maria', 'last_name' => 'Ivanova']);
 
         $results = $this->repository->findWithQueryAndLimit('Aleks', 20);
 
@@ -51,8 +50,8 @@ class RepositoryTest extends TestCase
 
     public function test_search_finds_by_last_name(): void
     {
-        Candidate::factory()->create(['first_name' => 'Ivan', 'last_name' => 'Sidorov']);
-        Candidate::factory()->create(['first_name' => 'Petr', 'last_name' => 'Kozlov']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['first_name' => 'Ivan', 'last_name' => 'Sidorov']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['first_name' => 'Petr', 'last_name' => 'Kozlov']);
 
         $results = $this->repository->findWithQueryAndLimit('Sidorov', 20);
 
@@ -62,8 +61,8 @@ class RepositoryTest extends TestCase
 
     public function test_search_finds_by_email(): void
     {
-        Candidate::factory()->create(['email' => 'test.dev@example.com']);
-        Candidate::factory()->create(['email' => 'other@example.com']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['email' => 'test.dev@example.com']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['email' => 'other@example.com']);
 
         $results = $this->repository->findWithQueryAndLimit('test.dev', 20);
 
@@ -73,7 +72,7 @@ class RepositoryTest extends TestCase
 
     public function test_search_is_case_insensitive(): void
     {
-        Candidate::factory()->create(['first_name' => 'Nikolay']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['first_name' => 'Nikolay']);
 
         $results = $this->repository->findWithQueryAndLimit('nikolay', 20);
 
@@ -82,7 +81,7 @@ class RepositoryTest extends TestCase
 
     public function test_search_respects_limit(): void
     {
-        Candidate::factory()->count(10)->create(['first_name' => 'Aleksey']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->count(10)->create(['first_name' => 'Aleksey']);
 
         $results = $this->repository->findWithQueryAndLimit('Aleksey', 3);
 
@@ -91,7 +90,7 @@ class RepositoryTest extends TestCase
 
     public function test_search_returns_empty_when_no_match(): void
     {
-        Candidate::factory()->create(['first_name' => 'Pavel']);
+        Candidate::factory()->forTenant($this->tenant, $this->user)->create(['first_name' => 'Pavel']);
 
         $results = $this->repository->findWithQueryAndLimit('nonexistent_xyz', 20);
 

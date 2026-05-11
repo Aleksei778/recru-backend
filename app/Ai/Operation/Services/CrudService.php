@@ -7,7 +7,7 @@ namespace App\Ai\Operation\Services;
 use App\Ai\Operation\Dto\{Create, Update};
 use App\Ai\Operation\Models\Operation;
 
-final readonly class CrudService
+class CrudService
 {
     public function create(Create $dto): Operation
     {

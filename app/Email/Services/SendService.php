@@ -21,13 +21,12 @@ final readonly class SendService
         Interview $interview,
         User $user,
         string $interviewUrl,
-        Locale $locale,
     ): InterviewInvitationMail {
         return new InterviewInvitationMail(
             interview: $interview,
             interviewLink: $interviewUrl,
             user: $user,
-        )->locale($locale->value);
+        )->locale($interview->candidate->value);
     }
 
     public function sendInterviewInvitationMail(InterviewInvitationMail $mailable): void

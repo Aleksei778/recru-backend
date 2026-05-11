@@ -14,7 +14,7 @@ use App\Interview\Models\Interview;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
-final readonly class GenerateService
+ class GenerateService
 {
     public function __construct(
         private QuestionsGenerator $questionsGenerator,

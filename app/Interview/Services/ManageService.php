@@ -106,7 +106,7 @@ final readonly class ManageService
     {
         $interview->markAsClosed();
 
-        $locale = Locale::tryFrom($interview->candidate->locale) ?? Locale::RU;
+        $locale = $interview->candidate->locale ?? Locale::RU;
 
         NotifyCandidateDecisionJob::dispatch($interview, $decision, $locale);
     }

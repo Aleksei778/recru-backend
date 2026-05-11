@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('emails.interview.subject', ['vacancy' => $vacancy->title]) }}</title>
+    <title>{{ __('emails.interview_invitation.subject', ['vacancy' => $vacancy->title]) }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -216,46 +216,46 @@
     <div class="card">
 
         <div class="card-header">
-            <p class="greeting">{{ __('emails.interview.greeting') }}</p>
-            <h1 class="headline">{!! __('emails.interview.headline') !!}</h1>
+            <p class="greeting">{{ __('emails.interview_invitation.greeting') }}</p>
+            <h1 class="headline">{!! __('emails.interview_invitation.headline') !!}</h1>
         </div>
 
         <div class="card-body">
 
             <p class="text">
-                {!! __('emails.interview.intro', [
+                {!! __('emails.interview_invitation.intro', [
                     'firstName' => $candidate->first_name,
                     'lastName' => $candidate->last_name
                 ]) !!}
             </p>
 
             <div class="vacancy-block">
-                <p class="vacancy-label">{{ __('emails.interview.vacancy_label') }}</p>
+                <p class="vacancy-label">{{ __('emails.interview_invitation.vacancy_label') }}</p>
                 <p class="vacancy-title">{{ $vacancy->title }}</p>
                 <p class="vacancy-company">{{ $user->tenant->name }}</p>
             </div>
 
             <div class="btn-wrap">
-                <a href="{{ $interviewUrl }}" class="btn">{{ __('emails.interview.button') }}</a>
+                <a href="{{ $interviewUrl }}" class="btn">{{ __('emails.interview_invitation.button') }}</a>
             </div>
 
             <div class="expiry">
                 <div class="expiry-dot"></div>
-                {{ __('emails.interview.expiry', ['expiresAt' => $interview->token_expires_at->format('d.m.Y H:i')]) }}
+                {{ __('emails.interview_invitation.expiry', ['expiresAt' => $interview->token_expires_at->format('d.m.Y H:i')]) }}
             </div>
 
         </div>
 
         <div class="card-footer">
             <span class="footer-brand">RECRU</span>
-            <span class="footer-note">{{ __('emails.interview.footer_note') }}</span>
+            <span class="footer-note">{{ __('emails.interview_invitation.footer_note') }}</span>
         </div>
 
     </div>
 
     <div class="below">
-        {{ __('emails.interview.ignore') }}<br>
-        <a href="#">{{ __('emails.interview.privacy') }}</a> · <a href="#">{{ __('emails.interview.unsubscribe') }}</a>
+        {{ __('emails.interview_invitation.ignore') }}<br>
+        <a href="#">{{ __('emails.interview.privacy') }}</a> · <a href="#">{{ __('emails.interview_invitation.unsubscribe') }}</a>
     </div>
 
 </div>

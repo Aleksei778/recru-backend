@@ -66,15 +66,25 @@ final readonly class Controller extends BaseController
         );
     }
 
-    public function show(Candidate $candidate): Resource
+    public function show(string $subdomain, Candidate $candidate): Resource
     {
         return Resource::make(
-            $candidate->load(['tenant', 'addedBy', 'interviews', 'workPlaces', 'socials', 'skills'])
+            $candidate->load([
+                'tenant',
+                'addedBy',
+                'interviews',
+                'workPlaces',
+                'socials',
+                'skills',
+            ])
         );
     }
 
-    public function update(UpdateRequest $request, Candidate $candidate): Resource
-    {
+    public function update(
+        UpdateRequest $request,
+        string $subdomain,
+        Candidate $candidate
+    ): Resource {
         $dto = Update::fromArray($request->validated());
 
         $candidate = $this->candidateService->update($candidate, $dto);
@@ -84,7 +94,7 @@ final readonly class Controller extends BaseController
         );
     }
 
-    public function destroy(Candidate $candidate): Response
+    public function destroy(string $subdomain, Candidate $candidate): Response
     {
         $this->candidateService->delete($candidate);
 

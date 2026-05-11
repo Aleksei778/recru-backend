@@ -19,7 +19,7 @@ final readonly class ParseGenerator
             - email (строка или null)
             - phone (строка или null)
             - socials (массив объектов: [{"name": "linkedin", "url": "..."}, {"name": "github", "url": "..."}] или [])
-            - experience_years (целое число или null)
+            - experience_years (число с плавающей точкой или null)
             - workplaces (массив объектов: [{"company_name": "...", "position": "...", "description": "...", "started_at": "YYYY-MM-DD", "ended_at": "YYYY-MM-DD" или null}] или [])
             - education_level (строка или null)
             - skills (массив строк)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Vacancy\Http\Requests;
 
+use App\Candidate\Enum\Grade;
 use App\Vacancy\Enum\EmploymentType;
 use App\Vacancy\Enum\Status;
 use App\Vacancy\Enum\WorkMode;
@@ -29,6 +30,8 @@ final class StoreRequest extends FormRequest
             'salary_currency' => ['nullable', 'string', 'max:10'],
             'status' => ['nullable', new Enum(Status::class)],
             'location' => ['nullable', 'string', 'max:255'],
+            'experience_years' => ['required', 'numeric', 'min:0'],
+            'grade' => ['required', new Enum(Grade::class)],
         ];
     }
 }

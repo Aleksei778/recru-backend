@@ -2,22 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Candidate;
+namespace Tests\Feature\Candidate;
 
-use App\Candidate\Dto\Candidate\Create;
-use App\Candidate\Dto\Candidate\Update;
-use App\Candidate\Enum\EducationLevel;
-use App\Candidate\Enum\Source;
-use App\Candidate\Enum\Status;
+use App\Candidate\Dto\Candidate\{Create, Update};
+use App\Candidate\Enum\{EducationLevel, Source, Status};
 use App\Candidate\Models\Candidate;
 use App\Candidate\Services\CrudService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
-class CrudServiceTest extends TestCase
+final class CrudServiceTest extends FeatureTestCase
 {
-    use RefreshDatabase;
-
     private CrudService $service;
 
     protected function setUp(): void

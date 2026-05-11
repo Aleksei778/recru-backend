@@ -8,6 +8,7 @@ use App\Common\Enum\Locale;
 use App\Interview\Models\Interview;
 use App\Resume\Models\Resume;
 use App\Skill\Traits\HasSkills;
+use App\Tenant\Traits\BelongsToTenant;
 use Database\Factories\CandidateFactory;
 use App\Candidate\Enum\{EducationLevel, Source, Status, Grade};
 use App\Tenant\Models\Tenant;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 final class Candidate extends Model
 {
     /** @use HasFactory<CandidateFactory> */
-    use HasFactory, HasSkills;
+    use HasFactory, HasSkills, BelongsToTenant;
 
     protected static function newFactory(): CandidateFactory
     {
@@ -50,6 +51,7 @@ final class Candidate extends Model
         'status' => Status::class,
         'source' => Source::class,
         'locale' => Locale::class,
+        'experience_years' => 'float',
     ];
 
     public function tenant(): BelongsTo

@@ -11,7 +11,7 @@ final readonly class TokenService
 {
     public function getInterviewPageUrl(Interview $interview): string
     {
-        return config('app.url') . "/interviews/$interview->token/start";
+        return config('app.url') . "/{$interview->candidate->locale->value}/interview/$interview->token";
     }
 
     public function generateToken(): string

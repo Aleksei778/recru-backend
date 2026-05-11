@@ -17,8 +17,8 @@ final readonly class Create
     {
         return new self(
             candidateId: (int) $data['candidate_id'],
-            name: $data['company_name'],
-            url: $data['position'],
+            name: $data['name'],
+            url: $data['url'],
         );
     }
 

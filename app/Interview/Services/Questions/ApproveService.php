@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Interview\Services\Questions;
 
-use App\Common\Enum\Locale;
-use App\Email\Jobs\NotifyUserQuestionsReadyJob;
-use App\Interview\Jobs\SynthesizeQuestionJob;
+use App\Interview\Jobs\{MarkAsReadyJob, SynthesizeQuestionJob};
 use App\Interview\Models\Interview;
 use App\Interview\Repositories\QuestionRepository;
-use App\User\Models\User;
 use Illuminate\Support\Facades\Bus;
 
 final readonly class ApproveService
@@ -20,12 +17,8 @@ final readonly class ApproveService
     ) {
     }
 
-    public function approve(
-        Interview $interview,
-        array $questionsNewData,
-        Locale $locale,
-        User $user,
-    ): void {
+    public function approve(Interview $interview, array $questionsNewData): void
+    {
         if (!$interview->isQuestionsReview()) {
             return;
         }
@@ -48,10 +41,7 @@ final readonly class ApproveService
 
         Bus::chain([
             ...$chain,
-            new NotifyUserQuestionsReadyJob(
-                interview: $interview,
-                hr: $user,
-            ),
+            new MarkAsReadyJob($interview),
         ])->dispatch();
 
         $interview->markAsSynthesizing();

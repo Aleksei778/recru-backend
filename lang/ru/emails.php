@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'interview' => [
+    'interview_invitation' => [
         'subject' => 'Приглашение на интервью: :vacancy',
         'greeting' => 'Приглашение',
         'headline' => 'Вас приглашают<br>на интервью',
@@ -13,16 +13,6 @@ return [
         'privacy' => 'Политика конфиденциальности',
         'unsubscribe' => 'Отписаться',
         'ignore' => 'Если вы получили это письмо по ошибке — просто проигнорируйте его.',
-    ],
-    'questions_ready' => [
-        'subject'         => 'Вопросы готовы: :firstName :lastName',
-        'tag'             => 'Вопросы готовы',
-        'headline'        => 'Вопросы для интервью сгенерированы',
-        'intro'           => 'Добрый день, <strong style="color:#000">:hrName</strong>! Вопросы для интервью с кандидатом ниже сгенерированы, интервью готово к запуску.',
-        'candidate_label' => 'Кандидат',
-        'vacancy_label'   => 'Вакансия',
-        'button'          => 'Перейти к интервью',
-        'footer_note'     => 'Автоматическое письмо — не отвечайте на него',
     ],
     'interview_finished' => [
         'subject'       => ':firstName :lastName завершил интервью — :vacancy',

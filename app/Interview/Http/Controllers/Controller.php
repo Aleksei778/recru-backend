@@ -7,7 +7,6 @@ namespace App\Interview\Http\Controllers;
 use App\Vacancy\Repositories\VacancyRepository;
 use App\Candidate\Repositories\Repository as CandidateRepository;
 use App\Common\{
-    Enum\Locale,
     Services\Storage,
     Http\Controllers\Controller as BaseController
 };
@@ -93,8 +92,6 @@ final readonly class Controller extends BaseController
             $interview->markAsInProgress();
         }
 
-        $interview->markAsInProgress();
-
         if (!$interview->isInProgress()) {
             return response()->json(['error' => 'Interview not available'], 422);
         }
@@ -170,13 +167,9 @@ final readonly class Controller extends BaseController
         string $subdomain,
         Interview $interview
     ): JsonResponse {
-        $locale = Locale::from(config('app.locale', 'ru'));
-
         $this->approveService->approve(
             interview: $interview,
             questionsNewData: $request->validated('questions'),
-            locale: $locale,
-            user: $request->user(),
         );
 
         return response()->json(['status' => 'ok']);

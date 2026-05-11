@@ -6,7 +6,7 @@ namespace App\Interview\Services\Questions;
 
 use App\Interview\Models\{Interview, Question};
 
-final readonly class CrudService
+class CrudService
 {
     public function create(
         Interview $interview,

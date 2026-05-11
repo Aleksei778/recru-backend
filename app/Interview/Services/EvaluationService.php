@@ -7,15 +7,15 @@ namespace App\Interview\Services;
 use App\Ai\Gpt\Providers\GptInterface;
 use App\Ai\Gpt\Prompts\Interview\EvaluationGenerator;
 use App\Ai\Operation\Dto\Create;
+use App\Email\Jobs\NotifyUserInterviewFinishedJob;
 use App\Ai\Operation\Enum\{Status, Type};
 use App\Ai\Operation\Jobs\CheckOperationJob;
 use App\Ai\Operation\Services\CrudService;
 use App\Common\Enum\Locale;
-use App\Email\Jobs\NotifyUserQuestionsReadyJob;
 use App\Interview\Models\Interview;
 use Psr\Log\LoggerInterface;
 
-final readonly class EvaluationService
+ class EvaluationService
 {
     public function __construct(
         private EvaluationGenerator $evaluationGenerator,
@@ -77,7 +77,7 @@ final readonly class EvaluationService
         $hr = $interview->vacancy->createdBy;
         $locale = Locale::from(config('app.locale', 'ru'));
 
-        NotifyUserQuestionsReadyJob::dispatch($interview, $hr, $locale);
+        NotifyUserInterviewFinishedJob::dispatch($interview, $hr, $locale);
     }
 
     private function markdownClean(string $response): string

@@ -17,7 +17,7 @@ return new class extends Migration {
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->enum('type', Type::values());
-            $table->enum('status', Status::values())->default(OperationStatus::PENDING);
+            $table->enum('status', Status::values())->default(Status::Pending);
             $table->string('yandex_id')->nullable()->index();
             $table->json('raw_response')->nullable();
             $table->json('raw_request')->nullable();
