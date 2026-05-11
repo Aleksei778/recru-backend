@@ -53,6 +53,8 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'domain' => env('APP_DOMAIN', 'recru.local'),
+    'http_schema' => env('HTTP_SCHEMA', 'https://'),
 
     /*
     |--------------------------------------------------------------------------

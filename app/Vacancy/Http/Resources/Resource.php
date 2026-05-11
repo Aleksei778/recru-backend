@@ -33,7 +33,7 @@ final class Resource extends JsonResource
             'closed_at' => $this->closed_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'grade' => $this->grade,
+            'grade' => $this->grade->value,
             'skills' => $this->whenLoaded('skills', function () {
                 return new SkillCollection($this->skills);
             }),

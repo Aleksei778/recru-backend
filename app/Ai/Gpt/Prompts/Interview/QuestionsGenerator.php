@@ -21,8 +21,8 @@ use App\Interview\Models\Interview;
         $vacancySkillsStr = implode(', ', $vacancy->skills->toArray());
         $candidateSkillsStr = implode(', ', $candidate->skills->toArray());
 
-        $candidateGrade = $candidate->grade ?? null;
-        $vacancyGrade = $vacancy->grade ?? null;
+        $candidateGrade = $candidate->grade?->value;
+        $vacancyGrade = $vacancy->grade?->value;
 
         return "Ты — профессиональный IT-рекрутер. Твоя задача — составить {$interview->questions_number} вопросов для первичного интервью кандидата на вакансию: '{$vacancy->title}'.
             Описание вакансии: $vacancy->description
