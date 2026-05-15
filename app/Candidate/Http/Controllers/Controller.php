@@ -20,11 +20,12 @@ use App\Candidate\{
 use App\Skill\Services\SyncService as SkillService;
 use App\Common\Http\Controllers\Controller as BaseController;
 use Illuminate\{
-    Http\Response,
+    Http\JsonResponse,
     Http\Request,
     Support\Collection as SupportCollection,
     Support\Facades\Auth
 };
+use Psr\Log\LoggerInterface;
 
 final readonly class Controller extends BaseController
 {
@@ -34,12 +35,20 @@ final readonly class Controller extends BaseController
         private SocialService $socialService,
         private SkillService $skillService,
         private CandidateRepository $candidateRepository,
+        private LoggerInterface $logger
     ) {
     }
 
     public function index(): Collection
     {
-        $candidates = Candidate::with(['tenant', 'addedBy', 'interviews', 'skills'])
+        $candidates = Candidate::with([
+            'tenant',
+            'addedBy',
+            'interviews',
+            'skills',
+            'workPlaces',
+            'socials',
+        ])
             ->latest()
             ->paginate(15);
 
@@ -50,6 +59,10 @@ final readonly class Controller extends BaseController
     {
         $validated = $request->validated();
 
+        $this->logger->info('Информация по новому кандидату', [
+            'candidate' => $validated,
+        ]);
+
         $dto = Create::fromArray([
             ...$request->validated(),
             'added_by_id' => Auth::id(),
@@ -59,10 +72,17 @@ final readonly class Controller extends BaseController
 
         $this->workplaceService->syncWorkPlaces($candidate, $validated['workplaces'] ?? []);
         $this->socialService->syncSocials($candidate, $validated['socials'] ?? []);
-        $this->skillService->syncSkillsByNames($candidate, $validated['skills'] ?? []);
+        $this->skillService->syncSkillsByIds($candidate, $validated['skill_ids'] ?? []);
 
         return Resource::make(
-            $candidate->load(['tenant', 'addedBy', 'interviews'])
+            $candidate->load([
+                'tenant',
+                'addedBy',
+                'interviews',
+                'skills',
+                'workPlaces',
+                'socials',
+            ])
         );
     }
 
@@ -73,9 +93,9 @@ final readonly class Controller extends BaseController
                 'tenant',
                 'addedBy',
                 'interviews',
+                'skills',
                 'workPlaces',
                 'socials',
-                'skills',
             ])
         );
     }
@@ -85,20 +105,32 @@ final readonly class Controller extends BaseController
         string $subdomain,
         Candidate $candidate
     ): Resource {
-        $dto = Update::fromArray($request->validated());
+        $validated = $request->validated();
+        $dto = Update::fromArray($validated);
 
         $candidate = $this->candidateService->update($candidate, $dto);
 
+        if (array_key_exists('skill_ids', $validated)) {
+            $this->skillService->syncSkillsByIds($candidate, $validated['skill_ids'] ?? []);
+        }
+
         return Resource::make(
-            $candidate->load(['tenant', 'addedBy', 'interviews'])
+            $candidate->load([
+                'tenant',
+                'addedBy',
+                'interviews',
+                'skills',
+                'workPlaces',
+                'socials',
+            ])
         );
     }
 
-    public function destroy(string $subdomain, Candidate $candidate): Response
+    public function destroy(string $subdomain, Candidate $candidate): JsonResponse
     {
         $this->candidateService->delete($candidate);
 
-        return response()->noContent();
+        return response()->json(['message' => 'Candidate successfully deleted.']);
     }
 
     public function search(Request $request): SupportCollection

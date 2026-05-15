@@ -29,6 +29,8 @@ final class UpdateRequest extends FormRequest
             'status' => ['sometimes', new Enum(Status::class)],
             'experience_years' => ['sometimes', 'integer', 'min:0', 'max:50'],
             'education_level' => ['sometimes', new Enum(EducationLevel::class)],
+            'skill_ids' => ['sometimes', 'array'],
+            'skill_ids.*' => ['integer', 'exists:skills,id'],
         ];
     }
 }

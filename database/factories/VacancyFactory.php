@@ -41,7 +41,7 @@ final class VacancyFactory extends Factory
         ],
         [
             'title' => 'Mobile Developer (Flutter)',
-            'description' => "Ищем Mobile-разработчика для создания кроссплатформенного мобильного приложения.\n\nОбязанности:\n— Разработка мобильных приложений на Flutter\n— Интеграция с REST API\n— Написание unit- и widget-тестов\n— Публикация и поддержка в App Store и Google Play\n\nТребования:\n— Опыт разработки на Flutter от 1.5 лет\n— Знание Dart, state management (Riverpod, BLoC)\n— Понимание нативных возможностей iOS и Android\n— Опыт публикации приложений",
+            'description' => "Ищем Mobile-разработчика для создания кроссплатформенного мобильного приложения.\n\nОбязанности:\n— Разработка мобильных приложений на Flutter\n— Интеграция с REST API\n— Написание unit- и widget-тестов\n— Публикация и поддержка в App Create и Google Play\n\nТребования:\n— Опыт разработки на Flutter от 1.5 лет\n— Знание Dart, state management (Riverpod, BLoC)\n— Понимание нативных возможностей iOS и Android\n— Опыт публикации приложений",
         ],
         [
             'title' => 'ML Engineer',
@@ -49,7 +49,7 @@ final class VacancyFactory extends Factory
         ],
         [
             'title' => 'iOS Developer (Swift)',
-            'description' => "Ищем iOS Developer для разработки нативного мобильного приложения.\n\nОбязанности:\n— Разработка iOS-приложения на Swift\n— Интеграция с REST API\n— Написание unit-тестов (XCTest)\n— Оптимизация производительности и памяти\n\nТребования:\n— Опыт разработки iOS на Swift от 2 лет\n— Знание UIKit и/или SwiftUI\n— Понимание архитектурных паттернов (MVVM, VIPER)\n— Опыт публикации в App Store",
+            'description' => "Ищем iOS Developer для разработки нативного мобильного приложения.\n\nОбязанности:\n— Разработка iOS-приложения на Swift\n— Интеграция с REST API\n— Написание unit-тестов (XCTest)\n— Оптимизация производительности и памяти\n\nТребования:\n— Опыт разработки iOS на Swift от 2 лет\n— Знание UIKit и/или SwiftUI\n— Понимание архитектурных паттернов (MVVM, VIPER)\n— Опыт публикации в App Create",
         ],
         [
             'title' => 'Android Developer (Kotlin)',

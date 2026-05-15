@@ -7,8 +7,11 @@ namespace App\Candidate\Http\Resources;
 use App\Candidate\Models\Candidate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Candidate\Http\Resources\WorkPlace\{Collection as WorkPlaceCollection,};
-use App\Candidate\Http\Resources\Social\{Collection as SocialCollection};
+use App\Candidate\Http\Resources\{
+    WorkPlace\Collection as WorkPlaceCollection,
+    Social\Collection as SocialCollection,
+};
+use App\Interview\Http\Resources\{Collection as InterviewCollection};
 use App\Skill\Http\Resources\{Collection as SkillCollection};
 
 /**
@@ -31,7 +34,9 @@ final class Resource extends JsonResource
             'experience_years' => $this->experience_years,
             'education_level' => $this->education_level?->value,
             'grade' => $this->grade?->value,
-            'interviews' => \App\Interview\Http\Resources\Resource::collection($this->whenLoaded('interviews')),
+            'interviews' => $this->whenLoaded('interviews', function () {
+                return new InterviewCollection($this->interviews);
+            }),
             'workplaces' => $this->whenLoaded('workPlaces', function () {
                 return new WorkPlaceCollection($this->workPlaces);
             }),

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Candidate\Http\Resources;
+namespace App\Vacancy\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

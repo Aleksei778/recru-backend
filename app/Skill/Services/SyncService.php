@@ -16,6 +16,13 @@ final readonly class SyncService
     ) {
     }
 
+    public function syncSkillsByIds(Vacancy|Candidate $model, array $ids): void
+    {
+        $model->skills()->sync(
+            ids: $this->repository->findIdsByIds($ids)
+        );
+    }
+
     public function syncSkillsByNames(Vacancy|Candidate $model, array $names): void
     {
         $model->skills()->sync(

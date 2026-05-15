@@ -18,8 +18,8 @@ use App\Interview\Models\Interview;
             ? 'Русский'
             : 'Английский';
 
-        $vacancySkillsStr = implode(', ', $vacancy->skills->toArray());
-        $candidateSkillsStr = implode(', ', $candidate->skills->toArray());
+        $vacancySkillsStr = $vacancy->skills->pluck('name')->implode(', ');
+        $candidateSkillsStr = $candidate->skills->pluck('name')->implode(', ');
 
         $candidateGrade = $candidate->grade?->value;
         $vacancyGrade = $vacancy->grade?->value;
@@ -32,7 +32,7 @@ use App\Interview\Models\Interview;
             Вопросы должны проверять как hard skills, так и soft skills (но первое - в большей мере).
             Выдай только список вопросов, каждый вопрос с новой строки, без номеров и лишнего текста.
             Также вставляй прямо задачи с кодом.
-            Язык вопросов: $language
+            Язык вопросов: Русский
            ";
     }
 

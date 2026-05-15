@@ -25,6 +25,15 @@ final readonly class Repository
     }
 
     /**
+     * @param  int[]  $ids
+     * @return int[]
+     */
+    public function findIdsByIds(array $ids): array
+    {
+        return Skill::whereIn('id', $ids)->pluck('id')->all();
+    }
+
+    /**
      * @param  string[]  $names
      * @return int[]
      */
