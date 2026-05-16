@@ -63,11 +63,14 @@ final readonly class ManageService
         $interview->markAsProcessing();
 
         $hr = $interview->vacancy->createdBy;
-        $locale = $hr->locale ?? Locale::RU;
+        $candidate = $interview->candidate;
 
-        NotifyUserInterviewFinishedJob::dispatch($interview, $hr, $locale);
+        $hrLocale = $hr->locale ?? Locale::RU;
+        $candidateLocale = $candidate->locale ?? Locale::RU;
 
-        $interview->questions->each(function (Question $question) {
+        NotifyUserInterviewFinishedJob::dispatch($interview, $hr, $hrLocale);
+
+        $interview->questions->each(function (Question $question) use ($candidateLocale): void {
             $answer = $question->answer;
 
             if (!$answer) {
@@ -85,7 +88,7 @@ final readonly class ManageService
 
             $operation = $this->operationCrudService->create($operationDto);
 
-            ProcessSttJob::dispatch($operation)->delay(now()->addSeconds(5));
+            ProcessSttJob::dispatch($operation, $candidateLocale)->delay(now()->addSeconds(5));
         });
     }
 

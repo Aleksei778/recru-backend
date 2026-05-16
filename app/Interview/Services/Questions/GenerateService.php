@@ -29,7 +29,7 @@ use Psr\Log\LoggerInterface;
     {
         $messages = $this->questionsGenerator->messages($interview);
 
-        $providerId = $this->gptService->completion($messages);
+        $providerId = $this->gptService->completion($messages, temperature: 0.6);
 
         if (!$providerId) {
             $this->logger->error('Failed to submit question generation', [

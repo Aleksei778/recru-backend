@@ -115,6 +115,7 @@ final readonly class Controller extends BaseController
                 disk: config('filesystems.default'),
                 path: $question->voiceLog->audio_path
             ),
+            'total_questions' => $interview->questions_number,
         ]);
     }
 

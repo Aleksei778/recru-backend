@@ -31,6 +31,7 @@ final class User extends Authenticatable
         'role',
         'tenant_id',
         'locale',
+        'name',
     ];
 
     protected $hidden = [

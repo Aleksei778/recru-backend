@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 use App\Ai\Operation\Http\Controllers\Controller as OperationController;
 use App\Candidate\Http\Controllers\Controller as CandidateController;
+use App\Common\Http\Middleware\EnsureUserIsAdmin;
 use App\Email\Http\Controllers\Controller as EmailController;
 use App\Interview\Http\Controllers\Controller as InterviewController;
-use App\Resume\Http\Controllers\Controller as  ResumeController;
+use App\Resume\Http\Controllers\Controller as ResumeController;
+use App\Tenant\Http\Controllers\Controller as ProfileTenantController;
+use App\User\Http\Controllers\Profile\{PasswordController as ProfilePasswordController,
+    UserController as ProfileUserController,};
+use App\User\Http\Controllers\Team\Controller as TeamController;
 use App\Vacancy\Http\Controllers\Controller as VacancyController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,5 +52,15 @@ Route::prefix('api')->group(function () {
             Route::get('{email}', [EmailController::class, 'show']);
             Route::post('send/invitation', [EmailController::class, 'sendInvitation']);
         });
+
+        Route::prefix('profile')->group(function () {
+            Route::patch('user/data', [ProfileUserController::class]);
+            Route::patch('user/password', [ProfilePasswordController::class]);
+            Route::middleware(EnsureUserIsAdmin::class)
+                ->patch('tenant', [ProfileTenantController::class]);
+        });
+
+        Route::middleware(EnsureUserIsAdmin::class)
+            ->apiResource('team', TeamController::class);
     });
 });

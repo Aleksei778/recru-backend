@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Candidate\Http\Requests;
 
+use App\Common\Enum\Locale;
 use App\Candidate\Enum\{EducationLevel, Status};
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -29,6 +30,7 @@ final class UpdateRequest extends FormRequest
             'status' => ['sometimes', new Enum(Status::class)],
             'experience_years' => ['sometimes', 'integer', 'min:0', 'max:50'],
             'education_level' => ['sometimes', new Enum(EducationLevel::class)],
+            'locale' => ['sometimes', new Enum(Locale::class)],
             'skill_ids' => ['sometimes', 'array'],
             'skill_ids.*' => ['integer', 'exists:skills,id'],
         ];

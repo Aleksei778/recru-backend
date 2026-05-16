@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Stt\Job;
 
+use App\Common\Enum\Locale;
 use App\Ai\Operation\{
     Dto\Update as OperationUpdate,
     Enum\Status as OperationStatus,
@@ -26,6 +27,7 @@ final class ProcessSttJob implements ShouldQueue
 
     public function __construct(
         private readonly Operation $operation,
+        private readonly Locale $locale,
     ) {
     }
 
@@ -35,7 +37,7 @@ final class ProcessSttJob implements ShouldQueue
     ): void {
         $audioPath = $this->operation->subject->voiceLog->audio_path;
 
-        $providerId = $stt->recognize($audioPath);
+        $providerId = $stt->recognize($audioPath, locale: $this->locale);
 
         if (!$providerId) {
             $updateOperationDto = new OperationUpdate(

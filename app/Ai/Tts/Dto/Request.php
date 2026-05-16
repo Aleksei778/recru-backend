@@ -8,7 +8,8 @@ final readonly class Request
 {
     public function __construct(
         public string $text,
-        public string $voice = 'filipp',
+        public string $voice = 'alena',
+        public string $role = 'good',
         public float $speed = 1.0,
         public string $audioEncoding = 'OGG_OPUS'
     ) {

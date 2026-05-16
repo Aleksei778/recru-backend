@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Candidate\Dto\Candidate;
 
+use App\Common\Enum\Locale;
 use App\Candidate\Enum\{EducationLevel, Source};
 
 final readonly class Create
@@ -17,6 +18,7 @@ final readonly class Create
         public Source $source,
         public float $experienceYears,
         public EducationLevel $educationLevel,
+        public Locale $locale,
         public ?int $addedById = null,
     ) {
     }
@@ -29,9 +31,16 @@ final readonly class Create
             middleName: $data['middle_name'] ?? null,
             email: $data['email'],
             phone: $data['phone'] ?? null,
-            source: $data['source'] instanceof Source ? $data['source'] : Source::from($data['source']),
+            source: $data['source'] instanceof Source
+                ? $data['source']
+                : Source::from($data['source']),
             experienceYears: (float) $data['experience_years'],
-            educationLevel: $data['education_level'] instanceof EducationLevel ? $data['education_level'] : EducationLevel::from($data['education_level']),
+            educationLevel: $data['education_level'] instanceof EducationLevel
+                ? $data['education_level']
+                : EducationLevel::from($data['education_level']),
+            locale: $data['locale'] instanceof Locale
+                ? $data['locale']
+                : Locale::from($data['locale']),
             addedById: (int) $data['added_by_id'] ?? null,
         );
     }
@@ -47,6 +56,7 @@ final readonly class Create
             'experience_years' => $this->experienceYears,
             'source' => $this->source->value,
             'education_level' => $this->educationLevel->value,
+            'locale' => $this->locale->value,
             'added_by_id' => $this->addedById,
         ];
     }

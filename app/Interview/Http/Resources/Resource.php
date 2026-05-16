@@ -32,7 +32,9 @@ final class Resource extends JsonResource
             }),
             'questions' => $this->whenLoaded('questions', function () {
                 return QuestionCollection::make($this->questions->load('answer'));
-            })
+            }),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

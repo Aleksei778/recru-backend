@@ -23,7 +23,7 @@ final class InterviewInvitationMail extends Mailable
 
     public function build(): self
     {
-        return $this->subject(__('emails.interview.subject', ['vacancy' => $this->interview->vacancy->title]))
+        return $this->subject(__('emails.interview_invitation.subject', ['vacancy' => $this->interview->vacancy->title]))
             ->view(
                 view: 'emails.interview_invitation',
                 data: [

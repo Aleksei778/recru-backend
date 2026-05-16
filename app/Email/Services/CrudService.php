@@ -18,7 +18,7 @@ final readonly class CrudService
             'sender_id' => $user->id,
             'interview_id' => $interview->id,
             'type' => Type::InterviewInvite,
-            'subject' => __('emails.interview.subject', ['vacancy' => $interview->vacancy->title]),
+            'subject' => __('emails.interview_invitation.subject', ['vacancy' => $interview->vacancy->title]),
             'recipient_id' => $interview->candidate->id,
             'recipient_type' => Candidate::class,
             'locale' => $interview->candidate->locale,

@@ -15,4 +15,17 @@ final readonly class CrudService
             'subdomain' => $subdomain,
         ]);
     }
+
+    public function update(
+        Tenant $tenant,
+        ?string $name,
+        ?string $website,
+        ?string $industry
+    ): void {
+        $tenant->update([
+            'name' => $name,
+            'industry' => $industry,
+            'website' => $website,
+        ]);
+    }
 }

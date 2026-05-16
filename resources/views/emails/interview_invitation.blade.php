@@ -255,7 +255,7 @@
 
     <div class="below">
         {{ __('emails.interview_invitation.ignore') }}<br>
-        <a href="#">{{ __('emails.interview.privacy') }}</a> · <a href="#">{{ __('emails.interview_invitation.unsubscribe') }}</a>
+        <a href="#">{{ __('emails.interview_invitation.privacy') }}</a> · <a href="#">{{ __('emails.interview_invitation.unsubscribe') }}</a>
     </div>
 
 </div>

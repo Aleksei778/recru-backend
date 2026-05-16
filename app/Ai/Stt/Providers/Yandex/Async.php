@@ -6,6 +6,7 @@ namespace App\Ai\Stt\Providers\Yandex;
 
 use App\Ai\Operation\Models\Operation;
 use App\Ai\Stt\Providers\SttInterface;
+use App\Common\Enum\Locale;
 use Illuminate\Http\Client\Response;
 
 final readonly class Async extends Common implements SttInterface
@@ -13,14 +14,17 @@ final readonly class Async extends Common implements SttInterface
     private const string ASYNC_URL = 'https://stt.api.cloud.yandex.net/stt/v3/recognizeFileAsync';
     private const string GET_RECOGNITION_URL = 'https://stt.api.cloud.yandex.net/stt/v3/getRecognition';
 
-    public function recognize(string $audioPath, string $format = 'OGG_OPUS'): ?string
-    {
+    public function recognize(
+        string $audioPath,
+        string $format = 'OGG_OPUS',
+        Locale $locale = Locale::RU
+    ): ?string {
         $url = $this->storage->url(
             disk: config('filesystems.default'),
             path: $audioPath,
         );
 
-        $response = $this->sendRequest(self::ASYNC_URL, $url, $format);
+        $response = $this->sendRequest($url, $format, $locale);
 
         if (!$response->successful()) {
             $this->logger->error('SpeechKit async submit failed', [
@@ -68,18 +72,12 @@ final readonly class Async extends Common implements SttInterface
 
         foreach (explode("\n", trim($body)) as $line) {
             $line = trim($line);
-            if ($line === '') {
-                continue;
-            }
+            if ($line === '') continue;
 
             $json = json_decode($line, true);
-            if (!is_array($json)) {
-                continue;
-            }
+            if (!is_array($json)) continue;
 
-            $alternatives = $json['result']['finalRefinement']['normalizedText']['alternatives']
-                ?? $json['result']['final']['alternatives']
-                ?? null;
+            $alternatives = $json['result']['finalRefinement']['normalizedText']['alternatives'] ?? null;
 
             if ($alternatives && !empty($alternatives[0]['text'])) {
                 $textParts[] = $alternatives[0]['text'];
@@ -89,29 +87,35 @@ final readonly class Async extends Common implements SttInterface
         return trim(implode(' ', $textParts));
     }
 
-    private function sendRequest(string $url, string $uri, string $format): Response
-    {
+    private function sendRequest(
+        string $uri,
+        string $format,
+        Locale $locale = Locale::RU
+    ): Response {
+        $localeLower = strtolower($locale->value);
+        $localeUpper = strtoupper($locale->value);
+
         return $this->client
             ->timeout(60)
             ->withHeaders([
                 'Authorization' => "Api-Key $this->apiKey",
                 'x-folder-id' => $this->folderId,
             ])
-            ->post($url, [
+            ->post(self::ASYNC_URL, [
                 'uri' => $uri,
                 'recognitionModel' => [
-                    'model' => 'general',
+                    'model' => 'general:rc',
                     'audioFormat' => [
                         'containerAudio' => ['containerAudioType' => $format],
                     ],
                     'textNormalization' => [
                         'textNormalization' => 'TEXT_NORMALIZATION_ENABLED',
                         'profanityFilter' => false,
-                        'literatureText' => false,
+                        'literatureText' => true,
                     ],
                     'languageRestriction' => [
                         'restrictionType' => 'WHITELIST',
-                        'languageCode' => ['ru-RU'],
+                        'languageCode' => ["$localeLower-$localeUpper"],
                     ],
                 ],
             ]);

@@ -46,6 +46,7 @@ final readonly class Tts implements TtsInterface
                 ],
                 'hints' => [
                     ['voice' => $request->voice],
+                    ['role' => $request->role],
                     ['speed' => $request->speed],
                 ],
                 'loudnessNormalizationOptions' => [
