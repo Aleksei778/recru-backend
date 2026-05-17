@@ -6,7 +6,7 @@ namespace App\Email\Models;
 
 use App\Common\Enum\Locale;
 use Database\Factories\EmailFactory;
-use App\Email\Enum\{Status, Type};
+use App\Email\Enum\Type;
 use App\User\Models\User;
 use App\Interview\Models\Interview;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,16 +31,15 @@ final class Email extends Model
         'sender_id',
         'recipient_type',
         'recipient_id',
-        'status',
         'type',
         'locale',
         'subject',
+        'body',
         'sent_at',
     ];
 
     protected $casts = [
         'locale' => Locale::class,
-        'status' => Status::class,
         'type' => Type::class,
     ];
 

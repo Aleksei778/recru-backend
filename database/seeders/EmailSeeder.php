@@ -33,17 +33,7 @@ final class EmailSeeder extends Seeder
                         'subject' => 'Приглашение на интервью',
                     ]);
 
-                if (fake()->boolean(75)) {
-                    Email::factory()
-                        ->forInterview($interview, $sender)
-                        ->sent()
-                        ->create([
-                            'type' => Type::QuestionsReady->value,
-                            'subject' => 'Вопросы для интервью готовы',
-                        ]);
-                }
-
-                if (fake()->boolean(50)) {
+                if (fake()->boolean()) {
                     $type = fake()->boolean() ? Type::Approve : Type::Reject;
                     Email::factory()
                         ->forInterview($interview, $sender)

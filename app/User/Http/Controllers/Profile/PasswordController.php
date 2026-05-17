@@ -6,13 +6,14 @@ namespace App\User\Http\Controllers\Profile;
 
 use App\Common\Http\Controllers\Controller as BaseController;
 use App\User\Http\Requests\Profile\UpdatePasswordRequest;
+use App\User\Http\Resources\Resource;
 use App\User\Services\CrudService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
 final readonly class PasswordController extends BaseController
 {
-    public function edit(UpdatePasswordRequest $request, CrudService $crudService): JsonResponse
+    public function edit(UpdatePasswordRequest $request, CrudService $crudService): Resource|JsonResponse
     {
         $validated = $request->validated();
         $passwordIncorrect = !Hash::check($validated['current_password'], $request->user()->password);
@@ -23,10 +24,10 @@ final readonly class PasswordController extends BaseController
             ], status: 422);
         }
 
-        $crudService->updatePassword($request->user(), $validated['new_password']);
+        $crudService->updatePassword($request->user(), $validated['password']);
 
-        return response()->json([
-            'message' => 'Your password has been updated.',
-        ]);
+        $user = $request->user()->refresh();
+
+        return Resource::make($user->load('tenant'));
     }
 }

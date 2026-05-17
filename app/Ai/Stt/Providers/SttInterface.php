@@ -8,5 +8,5 @@ use App\Common\Enum\Locale;
 
 interface SttInterface
 {
-    public function recognize(string $audioPath, string $format = 'OGG_OPUS', Locale $locale = Locale::RU): ?string;
+    public function recognize(string $audioPath, string $format = 'OGG_OPUS'): ?string;
 }

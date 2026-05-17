@@ -12,10 +12,10 @@ use App\Ai\Stt\Job\ProcessSttJob;
 use App\Common\Enum\Locale;
 use App\Common\Services\Storage;
 use App\Email\Jobs\NotifyCandidateDecisionJob;
-use App\Email\Jobs\NotifyUserInterviewFinishedJob;
 use App\Interview\Enum\Decision;
 use App\Interview\Repositories\QuestionRepository;
 use App\Interview\Services\Questions\CrudService as QuestionsCrudService;
+use App\User\Models\User;
 use App\VoiceLog\Dto\Create as VoiceLogCreateDto;
 use App\VoiceLog\Enum\Type as VoiceLogType;
 use App\Interview\Services\Answers\{StoragePathHelper, CrudService as AnswersCrudService};
@@ -62,24 +62,14 @@ final readonly class ManageService
     {
         $interview->markAsProcessing();
 
-        $hr = $interview->vacancy->createdBy;
-        $candidate = $interview->candidate;
-
-        $hrLocale = $hr->locale ?? Locale::RU;
-        $candidateLocale = $candidate->locale ?? Locale::RU;
-
-        NotifyUserInterviewFinishedJob::dispatch($interview, $hr, $hrLocale);
-
-        $interview->questions->each(function (Question $question) use ($candidateLocale): void {
-            $answer = $question->answer;
-
-            if (!$answer) {
+        $interview->questions->each(function (Question $question) use ($interview): void {
+            if (!$question->answer) {
                 return;
             }
 
             $operationDto = new OperationCreateDto(
                 type: OperationType::InterviewAnswersStt,
-                subjectId: $answer->id,
+                subjectId: $question->answer->id,
                 subjectType: Answer::class,
                 provider: config('ai.provider'),
                 providerId: '',
@@ -88,7 +78,10 @@ final readonly class ManageService
 
             $operation = $this->operationCrudService->create($operationDto);
 
-            ProcessSttJob::dispatch($operation, $candidateLocale)->delay(now()->addSeconds(5));
+            ProcessSttJob::dispatch(
+                $operation,
+                $interview->candidate->locale ?? Locale::RU
+            )->delay(now()->addSeconds(5));
         });
     }
 
@@ -101,16 +94,20 @@ final readonly class ManageService
                 continue;
             }
 
-            $this->questionsCrudService->update($question, $questionData['text'], $questionData['number']);
+            $this->questionsCrudService->update(
+                question: $question,
+                text: $questionData['text'],
+                number: $questionData['number']
+            );
         }
     }
 
-    public function close(Interview $interview, Decision $decision): void
-    {
+    public function close(
+        Interview $interview,
+        Decision $decision
+    ): void {
         $interview->markAsClosed();
 
-        $locale = $interview->candidate->locale ?? Locale::RU;
-
-        NotifyCandidateDecisionJob::dispatch($interview, $decision, $locale);
+        NotifyCandidateDecisionJob::dispatch($interview, $decision);
     }
 }

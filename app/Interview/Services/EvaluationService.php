@@ -11,11 +11,10 @@ use App\Email\Jobs\NotifyUserInterviewFinishedJob;
 use App\Ai\Operation\Enum\{Status, Type};
 use App\Ai\Operation\Jobs\CheckOperationJob;
 use App\Ai\Operation\Services\CrudService;
-use App\Common\Enum\Locale;
 use App\Interview\Models\Interview;
 use Psr\Log\LoggerInterface;
 
- class EvaluationService
+final readonly class EvaluationService
 {
     public function __construct(
         private EvaluationGenerator $evaluationGenerator,
@@ -74,10 +73,7 @@ use Psr\Log\LoggerInterface;
 
         $interview->markAsEvaluated();
 
-        $hr = $interview->vacancy->createdBy;
-        $locale = Locale::from(config('app.locale', 'ru'));
-
-        NotifyUserInterviewFinishedJob::dispatch($interview, $hr, $locale);
+        NotifyUserInterviewFinishedJob::dispatch($interview);
     }
 
     private function markdownClean(string $response): string

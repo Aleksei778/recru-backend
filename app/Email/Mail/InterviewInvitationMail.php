@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Email\Mail;
 
 use App\Interview\Models\Interview;
-use App\User\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\{
+    Bus\Queueable,
+    Mail\Mailable,
+    Queue\SerializesModels
+};
 
 final class InterviewInvitationMail extends Mailable
 {
@@ -17,7 +18,6 @@ final class InterviewInvitationMail extends Mailable
     public function __construct(
         public readonly Interview $interview,
         public readonly string $interviewLink,
-        public readonly User $user,
     ) {
     }
 
@@ -28,7 +28,7 @@ final class InterviewInvitationMail extends Mailable
                 view: 'emails.interview_invitation',
                 data: [
                     'candidate' => $this->interview->candidate,
-                    'user' => $this->user,
+                    'user' => $this->interview->vacancy->createdBy,
                     'interview' => $this->interview,
                     'interviewUrl' => $this->interviewLink,
                     'vacancy' => $this->interview->vacancy,

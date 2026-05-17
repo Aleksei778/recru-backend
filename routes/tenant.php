@@ -54,10 +54,10 @@ Route::prefix('api')->group(function () {
         });
 
         Route::prefix('profile')->group(function () {
-            Route::patch('user/data', [ProfileUserController::class]);
-            Route::patch('user/password', [ProfilePasswordController::class]);
+            Route::patch('user/data', [ProfileUserController::class, 'edit']);
+            Route::patch('user/password', [ProfilePasswordController::class, 'edit']);
             Route::middleware(EnsureUserIsAdmin::class)
-                ->patch('tenant', [ProfileTenantController::class]);
+                ->patch('tenant', [ProfileTenantController::class, 'edit']);
         });
 
         Route::middleware(EnsureUserIsAdmin::class)

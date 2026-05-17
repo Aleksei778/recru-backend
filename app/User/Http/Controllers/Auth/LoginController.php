@@ -7,11 +7,7 @@ namespace App\User\Http\Controllers\Auth;
 use App\Common\Http\Controllers\Controller;
 use App\User\Http\Requests\Auth\LoginRequest;
 use App\User\Repositories\Repository as UserRepository;
-use App\Tenant\Services\{CrudService as TenantCrudService};
-use App\User\Services\{
-    CrudService as UserCrudService,
-    TokenService as UserTokenService,
-};
+use App\User\Services\TokenService as UserTokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,8 +16,6 @@ final readonly class LoginController extends Controller
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserCrudService $userCrudService,
-        private TenantCrudService $tenantCrudService,
         private UserTokenService $userTokenService,
     ) {
     }
@@ -62,13 +56,11 @@ final readonly class LoginController extends Controller
 
     public function getMe(Request $request): JsonResponse
     {
+        $user = request()->user();
+
         return new JsonResponse([
-            'user' => $request->user(),
+            'user' => $user,
+            'tenant' => $user->tenant,
         ]);
     }
-
-//    public function updateMe(): JsonResponse
-//    {
-//
-//    }
 }

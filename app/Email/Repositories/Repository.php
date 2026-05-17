@@ -11,7 +11,7 @@ final readonly class Repository
 {
     public function findInboxWithPaginate(): LengthAwarePaginator
     {
-        return Email::where('sender_id', request()->user()->id)
+        return Email::where('recipient_id', request()->user()->id)
             ->with(['interview', 'sender', 'recipient'])
             ->latest()
             ->paginate(15);
@@ -19,7 +19,7 @@ final readonly class Repository
 
     public function findSentWithPaginate(): LengthAwarePaginator
     {
-        return Email::where('recipient_id', request()->user()->id)
+        return Email::where('sender_id', request()->user()->id)
             ->with(['interview', 'sender', 'recipient'])
             ->latest()
             ->paginate(15);

@@ -26,7 +26,7 @@ final class UpdatePasswordRequest extends FormRequest
                     ->numbers()
                     ->symbols(),
             ],
-            'new_password' => [
+            'password' => [
                 'required',
                 'string',
                 'confirmed',

@@ -11,6 +11,7 @@ use App\Candidate\Http\Resources\{
     WorkPlace\Collection as WorkPlaceCollection,
     Social\Collection as SocialCollection,
 };
+use App\Tenant\Http\Resources\Resource as TenantResource;
 use App\Interview\Http\Resources\{Collection as InterviewCollection};
 use App\Skill\Http\Resources\{Collection as SkillCollection};
 
@@ -23,7 +24,6 @@ final class Resource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'tenant_id' => $this->tenant_id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'middle_name' => $this->middle_name,
@@ -45,6 +45,9 @@ final class Resource extends JsonResource
             }),
             'skills' => $this->whenLoaded('skills', function () {
                 return new SkillCollection($this->skills);
+            }),
+            'tenant' => $this->whenLoaded('tenant', function () {
+                return TenantResource::make($this->tenant);
             }),
         ];
     }

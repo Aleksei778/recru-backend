@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Email\Http\Controllers;
 
+use App\Candidate\Models\Candidate;
 use App\Common\Http\Controllers\Controller as BaseController;
+use App\Email\Dto\Create;
+use App\Email\Enum\Type;
 use App\Email\Http\Requests\SendRequest;
 use App\Email\Http\Resources\Collection;
 use App\Email\Http\Resources\Resource;
@@ -62,13 +65,21 @@ final readonly class Controller extends BaseController
 
         $mailable = $this->sendService->getInterviewInvitationMail(
             interview: $interview,
-            user: $user,
             interviewUrl: $interviewUrl,
         );
 
         $this->sendService->sendInterviewInvitationMail($mailable);
 
-        $this->createService->createInvitation($user, $interview);
+        $this->createService->create(new Create(
+            senderId: $user->id,
+            interview: $interview,
+            type: Type::InterviewInvite,
+            subject: __('emails.interview_invitation.subject', ['vacancy' => $interview->vacancy->title]),
+            body: $mailable->render(),
+            recipientId: $interview->candidate->id,
+            recipientType: Candidate::class,
+            locale: $interview->candidate->locale,
+        ));
 
         return response()->json(['message' => 'Email sent successfully']);
     }

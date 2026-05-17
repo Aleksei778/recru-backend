@@ -7,9 +7,9 @@ namespace App\Email\Enum;
 enum Type: string
 {
     case InterviewInvite = 'interview_invite';
-    case QuestionsReady = 'questions_ready';
     case Reject = 'reject';
     case Approve = 'approve';
+    case InterviewFinished = 'interview_finished';
 
     public static function values(): array
     {

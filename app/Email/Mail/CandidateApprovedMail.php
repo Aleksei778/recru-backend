@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Email\Mail;
 
 use App\Interview\Models\Interview;
-use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\{
+    Bus\Queueable,
+    Mail\Mailable,
+    Queue\SerializesModels,
+};
 
 final class CandidateApprovedMail extends Mailable
 {
@@ -25,7 +27,7 @@ final class CandidateApprovedMail extends Mailable
                 view: 'emails.candidate_approved',
                 data: [
                     'candidate' => $this->interview->candidate,
-                    'vacancy'   => $this->interview->vacancy,
+                    'vacancy' => $this->interview->vacancy,
                     'interview' => $this->interview,
                 ]
             );

@@ -10,11 +10,22 @@ use App\Interview\Models\Answer;
 
 final readonly class GetAnswerFromSttOperationService
 {
+    public function __construct(
+        private NormalizeAnswerService $normalizeAnswerService,
+    ) {
+    }
+
     public function handleSttAnswerResult(Operation $operation, string $text): void
     {
         /** @var Answer $answer */
         $answer = $operation->subject;
-        $answer->setText($text);
+
+        $normalized = $this->normalizeAnswerService->normalize(
+            question: $answer->question->text,
+            rawText: $text,
+        );
+
+        $answer->setText($normalized);
 
         CheckAllAnswersReadyJob::dispatch($answer->question->interview);
     }

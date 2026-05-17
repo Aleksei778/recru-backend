@@ -11,11 +11,8 @@ final readonly class Sync extends Common implements SttInterface
 {
     private const string SYNC_URL  = 'https://stt.api.cloud.yandex.net/stt/v3/recognize';
 
-    public function recognize(
-        string $audioPath,
-        string $format = 'OGG_OPUS',
-        Locale $locale = Locale::RU
-    ): ?string {
+    public function recognize(string $audioPath, string $format = 'OGG_OPUS'): ?string
+    {
         $audioContent = $this->storage->get(
             disk: config('filesystems.default'),
             path: $audioPath
@@ -28,9 +25,6 @@ final readonly class Sync extends Common implements SttInterface
             return null;
         }
 
-        $localeLower = strtolower($locale->value);
-        $localeUpper = strtoupper($locale->value);
-
         $response = $this->client
             ->timeout(60)
             ->withHeaders([
@@ -39,7 +33,7 @@ final readonly class Sync extends Common implements SttInterface
             ->withBody($audioContent, 'application/octet-stream')
             ->post(self::SYNC_URL . '?' . http_build_query([
                     'folderId' => $this->folderId,
-                    'lang' => "$localeLower-$localeUpper",
+                    'lang' => "ru-RU",
                     'format' => match ($format) {
                         'OGG_OPUS' => 'oggopus',
                         'MP3' => 'mp3',

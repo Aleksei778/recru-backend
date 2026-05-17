@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Interview\Services\Questions;
 
-use App\Ai\Gpt\Providers\GptInterface;
-use App\Ai\Gpt\Prompts\Interview\QuestionsGenerator;
-use App\Ai\Operation\Dto\Create;
-use App\Ai\Operation\Enum\Type;
-use App\Ai\Operation\Jobs\CheckOperationJob;
-use App\Ai\Operation\Services\CrudService as OperationCrudService;
+use App\Ai\Gpt\{
+    Providers\GptInterface,
+    Prompts\Interview\QuestionsGenerator
+};
+use App\Ai\Operation\{
+    Dto\Create,
+    Enum\Type,
+    Jobs\CheckOperationJob,
+    Services\CrudService as OperationCrudService
+};
 use App\Interview\Models\Interview;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
- class GenerateService
+final readonly class GenerateService
 {
     public function __construct(
         private QuestionsGenerator $questionsGenerator,
@@ -29,7 +33,7 @@ use Psr\Log\LoggerInterface;
     {
         $messages = $this->questionsGenerator->messages($interview);
 
-        $providerId = $this->gptService->completion($messages, temperature: 0.6);
+        $providerId = $this->gptService->completion($messages, temperature: 1);
 
         if (!$providerId) {
             $this->logger->error('Failed to submit question generation', [

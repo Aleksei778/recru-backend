@@ -35,9 +35,9 @@ final class ProcessSttJob implements ShouldQueue
         SttInterface $stt,
         OperationCrudService $crudService
     ): void {
-        $audioPath = $this->operation->subject->voiceLog->audio_path;
-
-        $providerId = $stt->recognize($audioPath, locale: $this->locale);
+        $providerId = $stt->recognize(
+            audioPath: $this->operation->subject->voiceLog->audio_path
+        );
 
         if (!$providerId) {
             $updateOperationDto = new OperationUpdate(
